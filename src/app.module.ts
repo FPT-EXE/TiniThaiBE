@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -8,7 +9,10 @@ import { ExercisesModule } from './exercises/exercises.module';
 
 
 @Module({
-	imports: [CoursesModule, UsersModule, ExercisesModule],
+	imports: [ConfigModule.forRoot({
+		cache: true,
+		isGlobal: true
+	}),CoursesModule, UsersModule, ExercisesModule],
 	controllers: [AppController],
 	providers: [AppService],
 })
