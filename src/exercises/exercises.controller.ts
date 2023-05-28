@@ -1,34 +1,49 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	Post,
+	Body,
+	Patch,
+	Param,
+	Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+
 import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 
+
+@ApiTags('exercises')
 @Controller('exercises')
 export class ExercisesController {
-  constructor(private readonly exercisesService: ExercisesService) {}
+	constructor(private readonly _exercisesService: ExercisesService) {}
 
-  @Post()
-  create(@Body() createExerciseDto: CreateExerciseDto) {
-    return this.exercisesService.create(createExerciseDto);
-  }
+	@Post()
+	public create(@Body() createExerciseDto: CreateExerciseDto) {
+		return this._exercisesService.create(createExerciseDto);
+	}
 
-  @Get()
-  findAll() {
-    return this.exercisesService.findAll();
-  }
+	@Get()
+	public findAll() {
+		return this._exercisesService.findAll();
+	}
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.exercisesService.findOne(+id);
-  }
+	@Get(':id')
+	public findOne(@Param('id') id: string) {
+		return this._exercisesService.findOne(+id);
+	}
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExerciseDto: UpdateExerciseDto) {
-    return this.exercisesService.update(+id, updateExerciseDto);
-  }
+	@Patch(':id')
+	public update(
+	@Param('id') id: string,
+		@Body() updateExerciseDto: UpdateExerciseDto,
+	) {
+		return this._exercisesService.update(+id, updateExerciseDto);
+	}
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.exercisesService.remove(+id);
-  }
+	@Delete(':id')
+	public remove(@Param('id') id: string) {
+		return this._exercisesService.remove(+id);
+	}
 }
