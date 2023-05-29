@@ -6,12 +6,15 @@ import { AppService } from './app.service';
 import { CoursesModule } from './courses/courses.module';
 import { UsersModule } from './users/users.module';
 import { ExercisesModule } from './exercises/exercises.module';
+import { validateEnv } from './configuration/env.validation';
 
 
 @Module({
 	imports: [ConfigModule.forRoot({
 		cache: true,
-		isGlobal: true
+		isGlobal: true,
+		validate: validateEnv,
+		expandVariables: true
 	}),CoursesModule, UsersModule, ExercisesModule],
 	controllers: [AppController],
 	providers: [AppService],
