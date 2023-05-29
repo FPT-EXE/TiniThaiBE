@@ -18,8 +18,14 @@ class EnvironmentVariables {
 	@IsNotEmpty()
 	public DATABASE_USER: string;
     
-	@IsNumber()
+	@IsNotEmpty()
 	public DATABASE_PASSWORD: string;
+
+	@IsNotEmpty()
+	public MONGODB_URI: string;
+
+	@IsNotEmpty()
+	public CERT_PATH: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {
