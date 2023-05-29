@@ -10,6 +10,7 @@ import { ExercisesModule } from './exercises/exercises.module';
 import { validateEnv } from './configuration/env.validation';
 import { BootConfigService } from './configuration/boot.config';
 import { MongoConnectionFactory } from './configuration/mongo.factory';
+import { LessonsModule } from './lessons/lessons.module';
 
 
 @Module({
@@ -28,6 +29,7 @@ import { MongoConnectionFactory } from './configuration/mongo.factory';
 		CoursesModule,
 		UsersModule,
 		ExercisesModule,
+		LessonsModule,
 	],
 	controllers: [AppController],
 	providers: [AppService, BootConfigService, MongoConnectionFactory],
