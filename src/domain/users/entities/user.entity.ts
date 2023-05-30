@@ -5,9 +5,9 @@ import { Course } from 'src/domain/courses/entities/course.entity';
 
 
 export enum Role {
-	Admin,
-	Learner,
-	Teacher,
+	Admin = 'Admin',
+	Learner = 'Learner',
+	Teacher = 'Teacher',
 }
 
 export type UserDocument = HydratedDocument<User>;

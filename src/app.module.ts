@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -42,6 +42,11 @@ import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 			provide: APP_FILTER,
 			useClass: AllExceptionsFilter,
 		},
+		{
+			provide: APP_PIPE,
+			useClass: ValidationPipe
+		}
+
 	],
 	exports: [BootConfigService],
 })

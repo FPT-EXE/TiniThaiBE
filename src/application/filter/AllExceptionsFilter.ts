@@ -14,19 +14,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
 	public catch(exception: unknown, host: ArgumentsHost): void {
 		const { httpAdapter } = this._httpAdapterHost;
-
 		const ctx = host.switchToHttp();
-
-		const httpStatus = exception instanceof HttpException 
-			? exception.getStatus() 
-			: HttpStatus.INTERNAL_SERVER_ERROR;
-
-		const responseBody = {
+		let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+		let responseBody: unknown = {
 			statusCode: httpStatus,
-			timestamp: new Date().toISOString(),
-			path: httpAdapter.getRequestUrl(ctx.getRequest()),
+			message: 'Internal Server Error',
+			error: 'SERVER_ERROR'
 		};
-
+		if (exception instanceof HttpException) {
+			httpStatus = exception.getStatus();
+			responseBody = exception.getResponse();
+		}
 		httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
 	}
 }
