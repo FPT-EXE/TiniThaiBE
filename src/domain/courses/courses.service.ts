@@ -18,7 +18,7 @@ export class CoursesService {
 	}
 
 	public findAll() {
-		return 'This action returns all course';
+		return this._courseModel.find();
 	}
 
 	public async findOne(id: string): Promise<CourseDocument | null> {
@@ -29,10 +29,16 @@ export class CoursesService {
 	}
 
 	public update(id: string, updateCourseDto: UpdateCourseDto) {
-		return `This action updates a #${id} course`;
+		return this._courseModel.updateOne<CourseDocument>(
+			{ _id: id },
+			updateCourseDto,
+			{
+				new: true,
+			},
+		);
 	}
 
 	public remove(id: string) {
-		return `This action removes a #${id} course`;
+		return this._courseModel.deleteOne({ _id: id });
 	}
 }

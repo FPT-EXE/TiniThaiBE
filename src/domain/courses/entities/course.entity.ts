@@ -8,6 +8,10 @@ export type CourseDocument = HydratedDocument<Course>;
 export class Course {
 	@Prop({ required: true })
 	public title: string;
+
+	@Prop({ required: true })
+	public alias: string;
+
   
 	@Prop({ required: true })
 	public description: string;
