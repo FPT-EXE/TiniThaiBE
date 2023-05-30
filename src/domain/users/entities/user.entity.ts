@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+
+import { Course } from 'src/domain/courses/entities/course.entity';
 
 
 export enum Role {
@@ -23,6 +25,9 @@ export class User {
 
 	@Prop({ required: true, enum: Role, default: Role.Learner })
 	public role: Role;
+
+	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Course.name }] })
+	public courses: Array<Course>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

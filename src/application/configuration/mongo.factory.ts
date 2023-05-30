@@ -1,5 +1,3 @@
-import * as fs from 'fs';
-
 import { Injectable } from '@nestjs/common';
 import {
 	MongooseModuleOptions,
@@ -7,6 +5,7 @@ import {
 } from '@nestjs/mongoose';
 
 import { BootConfigService } from './boot.config';
+
 
 
 @Injectable()

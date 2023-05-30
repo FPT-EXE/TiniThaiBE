@@ -3,7 +3,7 @@ import {
 	Get,
 	Post,
 	Body,
-	Patch,
+	Put,
 	Param,
 	Delete,
 	Redirect,
@@ -21,27 +21,27 @@ export class CoursesController {
 	constructor(private readonly _coursesService: CoursesService) {}
 
 	@Post()
-	public create(@Body() createCourseDto: CreateCourseDto) {
+	public async create(@Body() createCourseDto: CreateCourseDto) {
 		return this._coursesService.create(createCourseDto);
 	}
 
 	@Get()
-	public findAll() {
+	public async findAll() {
 		return this._coursesService.findAll();
 	}
 
 	@Get(':id')
-	public findOne(@Param('id') id: string) {
-		return this._coursesService.findOne(+id);
+	public async findOne(@Param('id') id: string) {
+		return this._coursesService.findOne(id);
 	}
 
-	@Patch(':id')
-	public update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-		return this._coursesService.update(+id, updateCourseDto);
+	@Put(':id')
+	public async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
+		return this._coursesService.update(id, updateCourseDto);
 	}
 
 	@Delete(':id')
-	public remove(@Param('id') id: string) {
-		return this._coursesService.remove(+id);
+	public async remove(@Param('id') id: string) {
+		return this._coursesService.remove(id);
 	}
 }
