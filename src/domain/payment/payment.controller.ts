@@ -24,7 +24,7 @@ export class PaymentController {
 		@Req() req: Request,
 			@Body() { amount }: CreatePaymentDto,
 	): RedirectAction {
-		const ipAddress = req.socket.remoteAddress;
+		const ipAddress = req.socket.remoteAddress.replace(/^.*:/, '');
 		const paymentUrl = this._vnPaySvc.createPaymentUrl({ amount, ipAddress });
 		return {
 			url: paymentUrl,
