@@ -13,6 +13,8 @@ import { validateEnv } from './application/configuration/env.validation';
 import { BootConfigService } from './application/configuration/boot.config';
 import { MongoConnectionFactory } from './application/configuration/mongo.factory';
 import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
+import { PaymentModule } from './domain/payment/payment.module';
+import { AppConfigModule } from './application/configuration/config.module';
 
 
 @Module({
@@ -23,8 +25,9 @@ import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 			validate: validateEnv,
 			expandVariables: true,
 		}),
+		AppConfigModule,
 		MongooseModule.forRootAsync({
-			imports: [AppModule],
+			imports: [AppConfigModule],
 			inject: [BootConfigService],
 			useClass: MongoConnectionFactory
 		}),
@@ -32,11 +35,11 @@ import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 		UsersModule,
 		ExercisesModule,
 		LessonsModule,
+		PaymentModule
 	],
 	controllers: [AppController],
 	providers: [
 		AppService,
-		BootConfigService,
 		MongoConnectionFactory,
 		{
 			provide: APP_FILTER,
@@ -48,6 +51,5 @@ import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 		}
 
 	],
-	exports: [BootConfigService],
 })
 export class AppModule {}
