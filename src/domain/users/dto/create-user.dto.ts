@@ -13,14 +13,6 @@ export class CreateUserDto {
 	@ApiProperty()
 	public email: string;
 
-	@IsNotEmpty()
-	@ApiProperty()
-	public password: string;
-
-	@IsNotEmpty()
-	@ApiProperty()
-	public reenterPassword: string;
-
 	@IsEnum(Role)
 	@ApiProperty()
 	public role: Role;
