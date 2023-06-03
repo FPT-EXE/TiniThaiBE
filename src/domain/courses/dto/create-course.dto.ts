@@ -14,10 +14,17 @@ export class CreateCourseDto {
 	@ApiProperty()
 	public description: string;
 	
+	@ApiProperty()
+	public img: string;
+	
+	@ApiProperty()
+	@Min(0)
+	public price: number;
+
 	@Min(0)
 	@Max(5)
 	@ApiProperty()
-	public ratig: number;
+	public rating: number;
 	
 	@Min(0)
 	@Max(10)
