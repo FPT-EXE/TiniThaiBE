@@ -20,9 +20,6 @@ export class User {
 	@Prop({ required: true })
 	public email: string;
 
-	@Prop({ required: true })
-	public password: string;
-
 	@Prop({ required: true, enum: Role, default: Role.Learner })
 	public role: Role;
 

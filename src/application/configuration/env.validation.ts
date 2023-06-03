@@ -14,12 +14,6 @@ class EnvironmentVariables {
 
 	@IsNumber()
 	public PORT: number;
-	
-	@IsNotEmpty()
-	public DATABASE_USER: string;
-    
-	@IsNotEmpty()
-	public DATABASE_PASSWORD: string;
 
 	@IsNotEmpty()
 	public MONGODB_URI: string;

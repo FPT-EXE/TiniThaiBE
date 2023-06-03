@@ -14,7 +14,13 @@ export class Course {
 
   
 	@Prop({ required: true })
+	public img: string;
+	
+	@Prop({ required: true })
 	public description: string;
+
+	@Prop({ required: true, min: 0})
+	public price: number;
 
 	@Prop({ required: true, min: 0, max: 5 })
 	public rating: number;
