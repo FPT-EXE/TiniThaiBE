@@ -58,9 +58,8 @@ export class VnPayService {
 			vnp_SecureHash: this._signHashKey(transactionParams, secretKey),
 			...transactionParams,
 		};
-		const paymentUrl =
-      vnpUrl + '?' + qs.stringify(vnpParams, { encode: false });
-		return paymentUrl;
+		const url = vnpUrl + '?' + qs.stringify(vnpParams, { encode: false });
+		return url;
 	}
 
 	public vnpReturn(inpParams: VnpIpnParams): VnpPaymentResponse {
@@ -123,9 +122,9 @@ export class VnPayService {
 		inpParams = sortObject(inpParams);
 
 		const secretKey = this._configSvc.VNP_HASHSECRET;
-		const signData = qs.stringify(inpParams, { encode: false });
-		const hmac = crypto.createHmac('sha512', secretKey);
-		const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
+		const signData  = qs.stringify(inpParams, { encode: false });
+		const hmac      = crypto.createHmac('sha512', secretKey);
+		const signed    = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
 		if (secureHash !== signed) {
 			isValid = false;
@@ -148,28 +147,28 @@ export class VnPayService {
 	): VnpTransactionParams {
 		const createDate = formatYYYYMMDDHHMMSS(new Date());
 		return {
-			vnp_Version: '2.1.0',
-			vnp_Command: 'pay',
-			vnp_Locale: 'vn',
-			vnp_CurrCode: 'VND',
-			vnp_IpAddr: params.ipAddress,
-			vnp_TxnRef: params.orderId,
-			vnp_Amount: params.amount * 100,
-			vnp_OrderInfo: params.orderInfo,
+			vnp_Version   : '2.1.0',
+			vnp_Command   : 'pay',
+			vnp_Locale    : 'vn',
+			vnp_CurrCode  : 'VND',
+			vnp_IpAddr    : params.ipAddress,
+			vnp_TxnRef    : params.orderId,
+			vnp_Amount    : params.amount * 100,
+			vnp_OrderInfo : params.orderInfo,
 			vnp_CreateDate: createDate,
-			vnp_TmnCode: this._configSvc.VNP_TMNCODE,
-			vnp_ReturnUrl: this._configSvc.VNP_RETURN_URL,
+			vnp_TmnCode   : this._configSvc.VNP_TMNCODE,
+			vnp_ReturnUrl : this._configSvc.VNP_RETURN_URL,
 		};
 	}
 
 	private async _storePaymentRequest(amount: number): Promise<PaymentDocument> {
 		const payment = new Payment();
-		payment.amount = amount;
+		payment.amount   = amount;
 		payment.bankCode = 'unknown';
-		payment.date = formatYYYYMMDDHHMMSS(new Date());
-		payment.content = 'Payment:' + payment.date,
-		payment.status = PaymentStatus.Initial;
-		const user =  await this._userModel
+		payment.date     = formatYYYYMMDDHHMMSS(new Date());
+		payment.content  = 'Payment:' + payment.date,
+		payment.status   = PaymentStatus.Initial;
+		const user = await this._userModel
 			.findOne({
 				name: 'test',
 			})
