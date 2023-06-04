@@ -33,10 +33,21 @@ export enum VnpResCode {
 	InvalidOrder       = '01',
 	InvalidMerchant    = '02',
 	InvalidAmount      = '04',
+	ChecksumFailed     = '97',
 }
 
 export enum PaymentStatus {
-	Initial,
-	Success,
-	Failed
+	Initial = 'Initial',
+	Success = 'Success',
+	FailedForInvalidMerchant   = 'InvalidMerchant',
+	FailedForInvalidAmount     = 'InvalidAmount',
+	FailedForChecksum          = 'FailedForChecksum'
+}
+
+export type CreateTransactionParams = {
+	amount: number,
+	ipAddress: string,
+	date: string,
+	orderId: string,
+	orderInfo: string,
 }

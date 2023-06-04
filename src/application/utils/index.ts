@@ -1,3 +1,6 @@
+import { BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
+
 /* eslint-disable no-prototype-builtins */
 export const formatYYYYMMDDHHMMSS = (date: Date) => {
 	function pad2(n: number) {
@@ -29,3 +32,12 @@ export const sortObject = <T>(obj: T): T => {
 	}
 	return <T>sorted;
 };
+
+export function toMongoObjectId({ value, key }: {value: string, key: string}): Types.ObjectId {
+	const objectId = new Types.ObjectId(value);
+	if (Types.ObjectId.isValid(value) && (objectId.toString() === value)) {
+		return objectId;
+	} else {
+		throw new BadRequestException(`${key} is not a valid MongoId`);
+	}
+}

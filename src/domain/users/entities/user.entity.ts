@@ -35,7 +35,7 @@ export class User {
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Course.name }] })
 	public courses: Array<Course>;
 
-	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Payment.name }] })
+	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }] })
 	public payments: Array<Payment>;
 }
 

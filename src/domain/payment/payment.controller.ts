@@ -23,11 +23,11 @@ export class PaymentsController {
 
 	// @Redirect()
 	@Post('url')
-	public createPaymentUrl(
+	public async createPaymentUrl(
 		@Req() req: Request, @Body() { amount }: CreatePaymentDto,
-	): RedirectAction {
-		const ipAddress = req.socket.remoteAddress.replace(/^.*:/, '');
-		const paymentUrl = this._vnPaySvc.createPaymentUrl({ amount, ipAddress });
+	): Promise<RedirectAction> {
+		const ipAddress  = req.socket.remoteAddress.replace(/^.*:/, '');
+		const paymentUrl = await this._vnPaySvc.createPaymentUrl({ amount, ipAddress });
 		return {
 			url: paymentUrl,
 			status: HttpStatus.FOUND,

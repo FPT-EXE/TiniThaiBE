@@ -25,6 +25,7 @@ export class MongoConnectionFactory implements MongooseOptionsFactory {
 			sslValidate: true,
 			sslKey: this._credentials,
 			sslCert: this._credentials,
+			dbName: 'tinithai'
 		};
 	}
 }

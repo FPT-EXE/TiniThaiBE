@@ -15,6 +15,8 @@ import {
 	VnpParams,
 	VnpPaymentResponse,
 	VnpResCode,
+	PaymentStatus,
+	CreateTransactionParams,
 } from './type';
 import { Payment, PaymentDocument } from './entities/payment.entity';
 
@@ -32,19 +34,32 @@ export class VnPayService {
 		@InjectModel(User.name) private readonly _userModel: Model<User>,
 	) {}
 
-	public createPaymentUrl({ amount, ipAddress }: CreatePaymentParam): string {
+	public async createPaymentUrl({
+		amount,
+		ipAddress,
+	}: CreatePaymentParam): Promise<string> {
+		const {
+			date,
+			_id: orderId,
+			content: orderInfo,
+		} = await this._storePaymentRequest(amount);
 		const vnpUrl = this._configSvc.VNP_URL;
 		const secretKey = this._configSvc.VNP_HASHSECRET;
 		const transactionParams = sortObject(
-			this._createTransactionParams(amount, ipAddress),
+			this._createTransactionParams({
+				amount,
+				ipAddress,
+				date,
+				orderInfo,
+				orderId: orderId.toString(),
+			}),
 		);
-
 		const vnpParams: VnpParams = {
 			vnp_SecureHash: this._signHashKey(transactionParams, secretKey),
 			...transactionParams,
 		};
-
-		const paymentUrl = vnpUrl + '?' + qs.stringify(vnpParams, { encode: false });
+		const paymentUrl =
+      vnpUrl + '?' + qs.stringify(vnpParams, { encode: false });
 		return paymentUrl;
 	}
 
@@ -56,22 +71,48 @@ export class VnPayService {
 		return { vnpResCode: VnpResCode.Success, message: 'Payment success' };
 	}
 
-	public async vnpIpn(inpParams: VnpIpnParams) {
+	public async vnpIpn(inpParams: VnpIpnParams): Promise<VnpPaymentResponse> {
 		const isValid = this._validateCheckSum(inpParams);
 		const { vnp_ResponseCode: vnpResCode } = inpParams;
+		let result: VnpPaymentResponse = {
+			vnpResCode: VnpResCode.ChecksumFailed,
+			message: 'Fail for checksum',
+		};
 		if (!isValid) {
-			return await this._storePayment(inpParams, 'Fail for checksum');
+			await this._updatePaymentStatus(inpParams, 'Fail for checksum');
+			return result;
 		}
 		switch (vnpResCode) {
 			case VnpResCode.Success:
-				return await this._storePayment(inpParams);
+				await this._updatePaymentStatus(inpParams);
+				result = {
+					vnpResCode: VnpResCode.Success,
+					message: 'Success',
+				};
+				break;
 			case VnpResCode.InvalidMerchant:
-				return await this._storePayment(inpParams, 'InvalidMerchant');
+				await this._updatePaymentStatus(inpParams, 'InvalidMerchant');
+				result = {
+					vnpResCode: VnpResCode.InvalidMerchant,
+					message: 'InvalidMerchant',
+				};
+				break;
 			case VnpResCode.InvalidAmount:
-				return await this._storePayment(inpParams,'InvalidAmount');
+				await this._updatePaymentStatus(inpParams, 'InvalidAmount');
+				result = {
+					vnpResCode: VnpResCode.InvalidAmount,
+					message: 'InvalidAmount',
+				};
+				break;
 			case VnpResCode.InvalidOrder:
-				return await this._storePayment(inpParams, 'InvalidOrder');
+				await this._updatePaymentStatus(inpParams, 'InvalidOrder');
+				result = {
+					vnpResCode: VnpResCode.InvalidOrder,
+					message: 'InvalidOrder',
+				};
+				break;
 		}
+		return result;
 	}
 
 	private _validateCheckSum(inpParams: VnpIpnParams): boolean {
@@ -103,47 +144,53 @@ export class VnPayService {
 	}
 
 	private _createTransactionParams(
-		amount: number,
-		ipAddress: string,
+		params: CreateTransactionParams,
 	): VnpTransactionParams {
 		const createDate = formatYYYYMMDDHHMMSS(new Date());
-		const orderId = createDate.slice(-6); //HHmmss
 		return {
 			vnp_Version: '2.1.0',
 			vnp_Command: 'pay',
 			vnp_Locale: 'vn',
 			vnp_CurrCode: 'VND',
-			vnp_IpAddr: ipAddress,
-			vnp_TxnRef: orderId,
-			vnp_OrderInfo: 'Payment:' + orderId,
-			vnp_Amount: amount * 100,
+			vnp_IpAddr: params.ipAddress,
+			vnp_TxnRef: params.orderId,
+			vnp_Amount: params.amount * 100,
+			vnp_OrderInfo: params.orderInfo,
 			vnp_CreateDate: createDate,
 			vnp_TmnCode: this._configSvc.VNP_TMNCODE,
 			vnp_ReturnUrl: this._configSvc.VNP_RETURN_URL,
 		};
 	}
 
-	private async _storePayment(params: VnpIpnParams, status = 'Success') {
-		const {
-			vnp_Amount: amount,
-			vnp_BankCode: bankCode,
-			vnp_PayDate: date,
-			vnp_OrderInfo: content,
-		} = params;
+	private async _storePaymentRequest(amount: number): Promise<PaymentDocument> {
+		const payment = new Payment();
+		payment.amount = amount;
+		payment.bankCode = 'unknown';
+		payment.date = formatYYYYMMDDHHMMSS(new Date());
+		payment.content = 'Payment:' + payment.date,
+		payment.status = PaymentStatus.Initial;
+		const user =  await this._userModel
+			.findOne({
+				name: 'test',
+			})
+			.populate(Payment.plural);
+		payment.user = user;
+		const paymentDb = await this._paymentModel.create(payment);
+		user.payments.push(paymentDb);
+		await this._userModel.updateOne(null, user);
+		return paymentDb;
+	}
 
-		// for testing
-		const user = await this._userModel.findOne({
-			name: 'test'
-		});
-
-		this._paymentModel.create({
-			amount,
-			bankCode,
-			content,
-			date,
-			user,
-			status
-		});
+	private async _updatePaymentStatus(params: VnpIpnParams, status = 'Success') {
+		const { vnp_TxnRef:paymentId } = params;
+		await this._paymentModel.findByIdAndUpdate(
+			paymentId,
+			{
+				status,
+				bankCode: params.vnp_BankCode,
+			},
+			{ new: true },
+		);
 	}
 
 	public async findAll(): Promise<PaymentDocument[]> {
