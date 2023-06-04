@@ -11,13 +11,13 @@ export class FirebaseAuthStrategy extends PassportStrategy(
 	Strategy,
 	'firebase-auth',
 ) {
-	private _defaultApp: FirebaseApp.App;
+	private _firebaseApp: FirebaseApp.App;
 
 	constructor(private readonly _configSvc: BootConfigService) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 		});
-		this._defaultApp = firebase.initializeApp({
+		this._firebaseApp = firebase.initializeApp({
 			credential: firebase.credential.cert({
 				clientEmail: this._configSvc.FIREBASE_CLIENT_EMAIL,
 				privateKey : this._configSvc.FIREBASE_PRIVATE_KEY,
@@ -27,7 +27,7 @@ export class FirebaseAuthStrategy extends PassportStrategy(
 	}
 
 	public async validate(token: string) {
-		const firebaseUser = await this._defaultApp
+		const firebaseUser = await this._firebaseApp
 			.auth()
 			.verifyIdToken(token, true)
 			.catch((err) => {

@@ -6,13 +6,10 @@ import {
 	Put,
 	Param,
 	Delete,
-	HttpCode,
-	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CoursesService } from '../courses/courses.service';
-import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -21,7 +18,6 @@ import { RegisterCourseDto } from './dto/register-course.dto';
 
 
 @ApiTags('users')
-@UseGuards(FirebaseAuthGuard)
 @Controller('users')
 export class UsersController {
 	constructor(
@@ -41,7 +37,7 @@ export class UsersController {
 
 	@Get(':id')
 	public async findOne(@Param('id') id: string) {
-		return this._usersSvc.findOne(id);
+		return this._usersSvc.findOneById(id);
 	}
 
 	@Put(':id')
@@ -54,7 +50,7 @@ export class UsersController {
 	@Param('id') id: string,
 		@Body() { courseId }: RegisterCourseDto,
 	) {
-		const user = await this._usersSvc.findOne(id);
+		const user = await this._usersSvc.findOneById(id);
 		const course = await this._courseSvc.findOne(courseId);
 		user.courses.push(course);
 		return this._usersSvc.update(id, user);

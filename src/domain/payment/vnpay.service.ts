@@ -17,7 +17,7 @@ import {
 	VnpResCode,
 	PaymentStatus,
 	CreateTransactionParams,
-} from './type';
+} from './types';
 import { Payment, PaymentDocument } from './entities/payment.entity';
 
 

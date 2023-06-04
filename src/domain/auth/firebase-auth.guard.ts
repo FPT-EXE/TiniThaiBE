@@ -9,13 +9,6 @@ export class FirebaseAuthGuard extends AuthGuard('firebase-auth') {
 		super();
 	}
 	public canActivate(context: ExecutionContext) {
-		const isPublic = this._reflector.getAllAndOverride<boolean>('public', [
-			context.getHandler(),
-			context.getClass(),
-		]);
-		if (isPublic) {
-			return true;
-		}
 		return super.canActivate(context);
 	}
 }

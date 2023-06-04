@@ -23,13 +23,12 @@ export class User {
 		return 'user';
 	}
 
-	@Prop({ required: true })
 	public name: string;
 
 	@Prop({ required: true })
 	public email: string;
 
-	@Prop({ required: true, enum: Role, default: Role.Learner })
+	@Prop({ enum: Role, default: Role.Learner })
 	public role: Role;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Course.name }] })

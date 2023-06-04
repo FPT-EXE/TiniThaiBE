@@ -13,7 +13,7 @@ import { Request } from 'express';
 
 import { VnPayService } from './vnpay.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
-import { VnpIpnParams } from './type';
+import { VnpIpnParams } from './types';
 
 
 @ApiTags('payments')

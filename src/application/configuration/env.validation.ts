@@ -3,9 +3,10 @@ import { IsEnum, IsNotEmpty, IsNumber, validateSync } from 'class-validator';
 
 
 enum Environment {
-	Dev = 'dev',
-	Prod = 'prod',
-	Sit = 'sit',
+	Local = 'local',
+	Dev   = 'dev',
+	Prod  = 'prod',
+	Sit   = 'sit',
 }
 
 class EnvironmentVariables {

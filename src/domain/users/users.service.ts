@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, UpdateWriteOpResult } from 'mongoose';
+import { FilterQuery, Model, UpdateWriteOpResult } from 'mongoose';
 import { DeleteResult } from 'mongodb';
 
 import { Course } from '../courses/entities/course.entity';
@@ -24,12 +24,19 @@ export class UsersService {
 		return this._userModel.find();
 	}
 
-	public async findOne(id: string): Promise<UserDocument> {
+	public async findOneById(id: string): Promise<UserDocument> {
 		const user = (
 			await this._userModel
 				.findById(id)
 				.orFail(() => new NotFoundException('User not found'))
 		).populate(Course.plural);
+		return user;
+	}
+
+	public async findOne(
+		filter: FilterQuery<UserDocument | null>,
+	): Promise<UserDocument> {
+		const user = await this._userModel.findOne(filter);
 		return user;
 	}
 
