@@ -7,10 +7,12 @@ import {
 	Param,
 	Delete,
 	HttpCode,
+	UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { CoursesService } from '../courses/courses.service';
+import { FirebaseAuthGuard } from '../auth/firebase-auth.guard';
 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -19,6 +21,7 @@ import { RegisterCourseDto } from './dto/register-course.dto';
 
 
 @ApiTags('users')
+@UseGuards(FirebaseAuthGuard)
 @Controller('users')
 export class UsersController {
 	constructor(

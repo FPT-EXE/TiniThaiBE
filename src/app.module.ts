@@ -16,6 +16,7 @@ import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 import { PaymentModule } from './domain/payment/payment.module';
 import { AppConfigModule } from './application/configuration/config.module';
 import { AppLoggerMiddleware } from './application/logger/AppLogger';
+import { AuthModule } from './domain/auth/auth.module';
 
 
 @Module({
@@ -37,6 +38,7 @@ import { AppLoggerMiddleware } from './application/logger/AppLogger';
 		ExercisesModule,
 		LessonsModule,
 		PaymentModule,
+		AuthModule,
 	],
 	controllers: [AppController],
 	providers: [
