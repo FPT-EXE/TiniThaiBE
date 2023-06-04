@@ -14,14 +14,6 @@ export const formatYYYYMMDDHHMMSS = (date: Date) => {
 	);
 };
 
-export const formatHHMMSS = (date: Date) => {
-	const hhmmss =
-    ('0' + date.getHours()).slice(-2) +
-    ('0' + date.getMinutes()).slice(-2) +
-    ('0' + date.getSeconds()).slice(-2);
-	return hhmmss;
-};
-
 export const sortObject = <T>(obj: T): T => {
 	const sorted = {};
 	const str = [];

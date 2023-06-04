@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Min } from 'class-validator';
+import { Min } from 'class-validator';
 
 
 
