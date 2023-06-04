@@ -6,6 +6,13 @@ export type CourseDocument = HydratedDocument<Course>;
 
 @Schema()
 export class Course {
+	public static get plural(): string {
+		return 'courses';
+	}
+	public static get singular(): string {
+		return 'course';
+	}
+
 	@Prop({ required: true })
 	public title: string;
 
@@ -27,6 +34,7 @@ export class Course {
 
 	@Prop({ required: true, min: 0, max: 10 })
 	public degreeOfDifficulty: number;
+
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

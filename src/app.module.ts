@@ -1,4 +1,4 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -15,6 +15,7 @@ import { MongoConnectionFactory } from './application/configuration/mongo.factor
 import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 import { PaymentModule } from './domain/payment/payment.module';
 import { AppConfigModule } from './application/configuration/config.module';
+import { AppLoggerMiddleware } from './application/logger/AppLogger';
 
 
 @Module({
@@ -35,7 +36,7 @@ import { AppConfigModule } from './application/configuration/config.module';
 		UsersModule,
 		ExercisesModule,
 		LessonsModule,
-		PaymentModule
+		PaymentModule,
 	],
 	controllers: [AppController],
 	providers: [
@@ -52,4 +53,8 @@ import { AppConfigModule } from './application/configuration/config.module';
 
 	],
 })
-export class AppModule {}
+export class AppModule implements NestModule  {
+	public configure(consumer: MiddlewareConsumer): void {
+		consumer.apply(AppLoggerMiddleware).forRoutes('*');
+	}
+}

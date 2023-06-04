@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, UpdateWriteOpResult } from 'mongoose';
 import { DeleteResult } from 'mongodb';
 
+import { Course } from '../courses/entities/course.entity';
+
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './entities/user.entity';
@@ -27,7 +29,7 @@ export class UsersService {
 			await this._userModel
 				.findById(id)
 				.orFail(() => new NotFoundException('User not found'))
-		).populate('courses');
+		).populate(Course.plural);
 		return user;
 	}
 

@@ -6,6 +6,7 @@ import {
 	Put,
 	Param,
 	Delete,
+	HttpCode,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
