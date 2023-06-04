@@ -36,7 +36,7 @@ export class UsersService {
 	public async findOne(
 		filter: FilterQuery<UserDocument | null>,
 	): Promise<UserDocument> {
-		const user = await this._userModel.findOne(filter);
+		const user = (await this._userModel.findOne(filter));
 		return user;
 	}
 

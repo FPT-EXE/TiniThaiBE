@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { BootConfigService } from '../../application/configuration/boot.config';
 import { formatYYYYMMDDHHMMSS, sortObject } from '../../application/utils';
 import { User } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
 
 import {
 	VnpTransactionParams,
@@ -24,25 +25,27 @@ import { Payment, PaymentDocument } from './entities/payment.entity';
 type CreatePaymentParam = {
 	amount: number,
 	ipAddress: string,
+	user: User,
 };
 
 @Injectable()
 export class VnPayService {
 	constructor(
 		private readonly _configSvc: BootConfigService,
+		private readonly _userSvc: UsersService,
 		@InjectModel(Payment.name) private readonly _paymentModel: Model<Payment>,
-		@InjectModel(User.name) private readonly _userModel: Model<User>,
 	) {}
 
 	public async createPaymentUrl({
 		amount,
 		ipAddress,
+		user
 	}: CreatePaymentParam): Promise<string> {
 		const {
 			date,
 			_id: orderId,
 			content: orderInfo,
-		} = await this._storePaymentRequest(amount);
+		} = await this._storePaymentRequest(amount, user);
 		const vnpUrl = this._configSvc.VNP_URL;
 		const secretKey = this._configSvc.VNP_HASHSECRET;
 		const transactionParams = sortObject(
@@ -161,23 +164,19 @@ export class VnPayService {
 		};
 	}
 
-	private async _storePaymentRequest(amount: number): Promise<PaymentDocument> {
+	private async _storePaymentRequest(amount: number, {email}: User): Promise<PaymentDocument> {
 		const payment = new Payment();
 		payment.amount   = amount;
 		payment.bankCode = 'unknown';
 		payment.date     = formatYYYYMMDDHHMMSS(new Date());
 		payment.content  = 'Payment:' + payment.date,
 		payment.status   = PaymentStatus.Initial;
-		const user = await this._userModel
-			.findOne({
-				name: 'test',
-			})
-			.populate(Payment.plural);
-		payment.user = user;
-		const paymentDb = await this._paymentModel.create(payment);
-		user.payments.push(paymentDb);
-		await this._userModel.updateOne(null, user);
-		return paymentDb;
+		const userMDb = await (await this._userSvc.findOne({ email })).populate(Payment.plural);
+		payment.user = userMDb;
+		const paymentMDb = await this._paymentModel.create(payment);
+		userMDb.payments.push(paymentMDb);
+		await this._userSvc.update(userMDb._id.toString(), userMDb);
+		return paymentMDb;
 	}
 
 	private async _updatePaymentStatus(params: VnpIpnParams, status = 'Success') {

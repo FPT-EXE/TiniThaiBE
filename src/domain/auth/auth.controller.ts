@@ -9,7 +9,6 @@ import { FirebaseUser } from './types';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { GetUser, Public } from './decorators';
-import { JwtAuthGuard } from './jwt-auth.guard';
 
 
 @ApiBearerAuth('Bearer')
