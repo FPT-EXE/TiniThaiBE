@@ -10,11 +10,10 @@ import { UsersModule } from './domain/users/users.module';
 import { ExercisesModule } from './domain/exercises/exercises.module';
 import { LessonsModule } from './domain/lessons/lessons.module';
 import { validateEnv } from './application/configuration/env.validation';
-import { BootConfigService } from './application/configuration/boot.config';
 import { MongoConnectionFactory } from './application/configuration/mongo.factory';
 import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
 import { PaymentModule } from './domain/payment/payment.module';
-import { AppConfigModule } from './application/configuration/config.module';
+import { AppConfigModule, BootConfigService } from './application/configuration';
 import { AppLoggerMiddleware } from './application/logger/AppLogger';
 import { AuthModule } from './domain/auth/auth.module';
 

@@ -14,6 +14,14 @@ export class BootConfigService {
 		return this._configService.get('NODE_ENV');
 	}
 
+	public get JWT_EXPIRES_IN(): string {
+		return this._configService.get('JWT_EXPIRES_IN');
+	}
+
+	public get JWT_SECRET(): string {
+		return this._configService.get('JWT_SECRET');
+	}
+
 	public get MONGODB_URI(): string {
 		return this._configService.get('MONGODB_URI');
 	}
