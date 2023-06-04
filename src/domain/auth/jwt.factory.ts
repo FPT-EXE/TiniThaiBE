@@ -8,8 +8,8 @@ import { BootConfigService } from 'src/application/configuration/boot.config';
 @Injectable()
 export class JwtFactory implements JwtOptionsFactory {
 
-	constructor(private readonly _configSvc: BootConfigService) {
-	}
+	constructor(private readonly _configSvc: BootConfigService) {}
+	
 	public createJwtOptions(): JwtModuleOptions {
 		return {
 			global: true,

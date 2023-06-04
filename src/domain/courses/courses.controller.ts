@@ -8,13 +8,14 @@ import {
 	Delete,
 	Redirect,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 
 
+@ApiBearerAuth('Bearer')
 @ApiTags('courses')
 @Controller('courses')
 export class CoursesController {

@@ -7,7 +7,7 @@ import {
 	Param,
 	Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CoursesService } from '../courses/courses.service';
 
@@ -17,6 +17,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterCourseDto } from './dto/register-course.dto';
 
 
+@ApiBearerAuth('Bearer')
 @ApiTags('users')
 @Controller('users')
 export class UsersController {

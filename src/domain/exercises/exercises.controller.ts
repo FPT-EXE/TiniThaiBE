@@ -7,13 +7,14 @@ import {
 	Param,
 	Delete,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { ExercisesService } from './exercises.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 
 
+@ApiBearerAuth('Bearer')
 @ApiTags('exercises')
 @Controller('exercises')
 export class ExercisesController {

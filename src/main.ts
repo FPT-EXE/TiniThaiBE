@@ -11,6 +11,10 @@ function enableSwagger(app: INestApplication) {
 		.setTitle('TiniThai')
 		.setDescription('TiniThai API')
 		.setVersion('1.0')
+		.addSecurity('Bearer', {
+			type: 'http',
+			scheme: 'Bearer',
+		})
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('/v1/tinithai/api', app, document); // replace with process.env.API_PREFIX
