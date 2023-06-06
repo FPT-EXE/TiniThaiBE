@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { UsersService } from '../users/users.service';
-import { User } from '../users/entities/user.entity';
+import { HttpUser, User } from '../users/entities/user.entity';
 
 import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { FirebaseUser } from './types';
@@ -41,7 +41,8 @@ export class AuthController {
 
 
 	@Get('profile')
-	public async getProfile(@GetUser() user: User) {
+	public async getProfile(@GetUser() httpUser: HttpUser) {
+		const user = await this._usersSvc.findOneById(httpUser._id);
 		return user;
 	}
 }

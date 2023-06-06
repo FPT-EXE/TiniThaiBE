@@ -1,3 +1,5 @@
+import fs from 'fs';
+
 import {
 	Controller,
 	Get,
@@ -6,15 +8,23 @@ import {
 	Put,
 	Param,
 	Delete,
+	UploadedFile,
+	UseInterceptors,
+	Req,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CoursesService } from '../courses/courses.service';
+import { GetUser } from '../auth/decorators';
+import { FilesService } from '../files/files.service';
 
+import { AvatarUploadDto } from './dto/avatar.dto';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { RegisterCourseDto } from './dto/register-course.dto';
+import { HttpUser } from './entities/user.entity';
 
 
 @ApiBearerAuth('Bearer')
@@ -24,6 +34,7 @@ export class UsersController {
 	constructor(
 		private readonly _usersSvc: UsersService,
 		private readonly _courseSvc: CoursesService,
+		private readonly _filesSvc: FilesService,
 	) {}
 
 	@Post()
@@ -42,7 +53,10 @@ export class UsersController {
 	}
 
 	@Put(':id')
-	public async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+	public async update(
+	@Param('id') id: string,
+		@Body() updateUserDto: UpdateUserDto,
+	) {
 		return this._usersSvc.update(id, updateUserDto);
 	}
 
@@ -60,5 +74,21 @@ export class UsersController {
 	@Delete(':id')
 	public async remove(@Param('id') id: string) {
 		return this._usersSvc.remove(id);
+	}
+
+	@Post('avatar')
+	@UseInterceptors(FileInterceptor('avatar'))
+	@ApiConsumes('multipart/form-data')
+	@ApiBody({
+		description: 'Avatar',
+		type: AvatarUploadDto,
+	})
+	public async uploadAvatar(
+	@GetUser() user: HttpUser,
+		@UploadedFile() avatar: Express.Multer.File,
+	) {
+		const imageId = await this._filesSvc.upload(avatar);
+		await this._usersSvc.update(user._id, { avatar: imageId });
+		return imageId;
 	}
 }

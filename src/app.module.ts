@@ -16,6 +16,7 @@ import { PaymentModule } from './domain/payment/payment.module';
 import { AppConfigModule, BootConfigService } from './application/configuration';
 import { AppLoggerMiddleware } from './application/logger/AppLogger';
 import { AuthModule } from './domain/auth/auth.module';
+import { FilesModule } from './domain/files/files.module';
 
 
 @Module({
@@ -38,6 +39,7 @@ import { AuthModule } from './domain/auth/auth.module';
 		LessonsModule,
 		PaymentModule,
 		AuthModule,
+		FilesModule
 	],
 	controllers: [AppController],
 	providers: [
@@ -50,8 +52,7 @@ import { AuthModule } from './domain/auth/auth.module';
 		{
 			provide: APP_PIPE,
 			useClass: ValidationPipe
-		}
-
+		},
 	],
 })
 export class AppModule implements NestModule  {
