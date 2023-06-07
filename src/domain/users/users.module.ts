@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { CoursesModule } from '../courses/courses.module';
 import { FilesModule } from '../files/files.module';
+import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
@@ -13,7 +14,8 @@ import { User, UserSchema } from './entities/user.entity';
 	imports: [
 		MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
 		CoursesModule,
-		FilesModule
+		FilesModule,
+		CloudinaryModule
 	],
 	controllers: [UsersController],
 	providers: [UsersService],

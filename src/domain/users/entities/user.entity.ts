@@ -37,8 +37,8 @@ export class User {
 	@Prop({ enum: Role, default: Role.Learner })
 	public role: Role;
 
-	@Prop({ type: mongoose.Schema.Types.ObjectId })
-	public avatar: Types.ObjectId;
+	@Prop()
+	public avatar: string;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Course.name }] })
 	public courses: Array<Course>;

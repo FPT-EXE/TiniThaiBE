@@ -18,6 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CoursesService } from '../courses/courses.service';
 import { GetUser } from '../auth/decorators';
 import { FilesService } from '../files/files.service';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 import { AvatarUploadDto } from './dto/avatar.dto';
 import { UsersService } from './users.service';
@@ -35,6 +36,7 @@ export class UsersController {
 		private readonly _usersSvc: UsersService,
 		private readonly _courseSvc: CoursesService,
 		private readonly _filesSvc: FilesService,
+		private readonly _cloudinarySvc: CloudinaryService,
 	) {}
 
 	@Post()
@@ -87,8 +89,8 @@ export class UsersController {
 	@GetUser() user: HttpUser,
 		@UploadedFile() avatar: Express.Multer.File,
 	) {
-		const imageId = await this._filesSvc.upload(avatar);
-		await this._usersSvc.update(user._id, { avatar: imageId });
-		return imageId;
+		const res = await this._cloudinarySvc.uploadFile(avatar);
+		await this._usersSvc.update(user._id, { avatar: res.url });
+		return res;
 	}
 }

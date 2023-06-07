@@ -89,4 +89,16 @@ export class BootConfigService {
 	public get FIREBASE_UNIVERSAL_DOMAIN(): string {
 		return this._configService.get('FIREBASE_UNIVERSAL_DOMAIN');
 	}
+
+	public get CLOUDINARY_NAME(): string {
+		return this._configService.get('CLOUD_NAME');
+	}
+
+	public get CLOUDINARY_API_KEY(): string {
+		return this._configService.get('CLOUD_API_KEY');
+	}
+
+	public get CLOUDINARY_API_SECRET(): string {
+		return this._configService.get('CLOUD_API_SECRET');
+	}
 }
