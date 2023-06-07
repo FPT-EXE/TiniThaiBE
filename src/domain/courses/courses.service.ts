@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { ObjectId } from 'mongodb';
 
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
 import { Course, CourseDocument } from './entities/course.entity';
 import { CreateCourseModuleDto } from './dto/create-course-module.dto';
-import { CourseModule } from './entities/course-module.entity';
+import { CourseModule, CourseModuleDocument } from './entities/course-module.entity';
 
 
 @Injectable()
 export class CoursesService {
 	constructor(
-		@InjectModel(Course.name) private readonly _courseModel: Model<Course>,
-		@InjectModel(CourseModule.name)
-		private readonly _moduleModel: Model<CourseModule>,
+		@InjectModel(Course.name) 		private readonly _courseModel: Model<Course>,
+		@InjectModel(CourseModule.name) private readonly _moduleModel: Model<CourseModule>,
 	) {}
 
 	public async create(createCourseDto: CreateCourseDto) {
@@ -39,11 +39,22 @@ export class CoursesService {
 		return user;
 	}
 
-	public update(id: string, updateCourseDto: UpdateCourseDto) {
-		console.log(updateCourseDto.moduleIds);
+	public async update(id: string, updateCourseDto: UpdateCourseDto) {
+		let modules: CourseModule[];
+		const { moduleIds } = updateCourseDto;
+		if (Boolean(moduleIds) && Boolean(moduleIds.length)) {
+			modules = (await (await this.findOne({ id })).populate(CourseModule.plural)).modules || [];
+			const promises = moduleIds.map((id) => this.findModuleById(id));
+			const addedModules = await Promise.all(promises);
+			modules.push(...addedModules);
+		}
+		delete updateCourseDto.moduleIds;
 		return this._courseModel.updateOne<CourseDocument>(
 			{ _id: id },
-			updateCourseDto,
+			{
+				...updateCourseDto,
+				modules,
+			},
 			{
 				new: true,
 			},
@@ -58,10 +69,27 @@ export class CoursesService {
 		courseId: string,
 		moduleDto: CreateCourseModuleDto,
 	) {
-		const course = await (await this.findOne({id: courseId})).populate(CourseModule.plural);
+		const course = await (await this.findOne({ id: courseId })).populate(CourseModule.plural);
 		const module = await this._moduleModel.create({ ...moduleDto });
 		course.modules.push(module);
 		await this._courseModel.findByIdAndUpdate(course._id, course);
 		return module;
+	}
+
+	public async findModuleById(id: string): Promise<CourseModuleDocument | null> {
+		const module = await this._moduleModel
+			.findById(id)
+			.orFail(() => new NotFoundException('Module not found'));
+		return module;
+	}
+
+	public async deleteCourseModule(id: string, moduleId: string) {
+		const course = await this.findOneById(id);
+		course.modules = course.modules.filter((id: unknown) => (id as ObjectId).toString() !== moduleId);
+		const deletePromise = this._moduleModel.deleteOne({_id: moduleId});
+		const updatePromise = this._courseModel.findByIdAndUpdate(course._id, course);
+		const promises = [deletePromise, updatePromise];
+		const [deleteResult] = await Promise.all(promises);
+		return deleteResult;
 	}
 }

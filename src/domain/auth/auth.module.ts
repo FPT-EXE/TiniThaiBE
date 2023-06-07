@@ -29,10 +29,10 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 	providers: [
 		AuthService,
 		FirebaseAuthStrategy,
-		{
-			provide: APP_GUARD,
-			useClass: JwtAuthGuard,
-		},
+		// {
+		// 	provide: APP_GUARD,
+		// 	useClass: JwtAuthGuard,
+		// },
 	],
 })
 export class AuthModule {}

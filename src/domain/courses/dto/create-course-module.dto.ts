@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNotEmpty, Max, Min } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 import { ModuleType } from '../entities/course-module.entity';
 

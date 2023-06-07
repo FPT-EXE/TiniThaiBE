@@ -19,35 +19,41 @@ import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 @ApiTags('courses')
 @Controller('courses')
 export class CoursesController {
-	constructor(private readonly _coursesService: CoursesService) {}
+	constructor(private readonly _coursesSvc: CoursesService) {}
 
 	@Post()
 	public async create(@Body() createCourseDto: CreateCourseDto) {
-		return this._coursesService.create(createCourseDto);
+		return this._coursesSvc.create(createCourseDto);
 	}
 
 	@Get()
 	public async findAll() {
-		return this._coursesService.findAll();
+		return this._coursesSvc.findAll();
 	}
 
 	@Get(':id')
 	public async findOne(@Param('id') id: string) {
-		return this._coursesService.findOneById(id);
+		return this._coursesSvc.findOneById(id);
 	}
 
 	@Put(':id')
 	public async update(@Param('id') id: string, @Body() updateCourseDto: UpdateCourseDto) {
-		return this._coursesService.update(id, updateCourseDto);
+		return this._coursesSvc.update(id, updateCourseDto);
 	}
 
 	@Delete(':id')
 	public async remove(@Param('id') id: string) {
-		return this._coursesService.remove(id);
+		return this._coursesSvc.remove(id);
 	}
 
 	@Post(':id/modules')
 	public async createCourseModule(@Param('id') id: string, @Body() moduleDto: CreateCourseModuleDto) {
-		return this._coursesService.createCourseModule(id, moduleDto);
+		return this._coursesSvc.createCourseModule(id, moduleDto);
 	}
+
+	@Delete(':id/modules/:moduleId')
+	public async deleteCourseModule(@Param('id') id: string, @Param('moduleId') moduleId: string) {
+		return this._coursesSvc.deleteCourseModule(id, moduleId);
+	}
+
 }
