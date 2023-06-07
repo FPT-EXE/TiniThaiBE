@@ -7,8 +7,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoursesModule } from './domain/courses/courses.module';
 import { UsersModule } from './domain/users/users.module';
-import { ExercisesModule } from './domain/exercises/exercises.module';
-import { LessonsModule } from './domain/lessons/lessons.module';
 import { validateEnv } from './application/configuration/env.validation';
 import { MongoConnectionFactory } from './application/configuration/mongo.factory';
 import { AllExceptionsFilter } from './application/filter/AllExceptionsFilter';
@@ -35,8 +33,6 @@ import { FilesModule } from './domain/files/files.module';
 		}),
 		CoursesModule,
 		UsersModule,
-		ExercisesModule,
-		LessonsModule,
 		PaymentModule,
 		AuthModule,
 		FilesModule

@@ -34,7 +34,7 @@ export class User {
 	@Prop({ required: true })
 	public email: string;
 
-	@Prop({ enum: Role, default: Role.Learner })
+	@Prop({ enum: Role })
 	public role: Role;
 
 	@Prop()

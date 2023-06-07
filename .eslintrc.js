@@ -55,7 +55,7 @@ module.exports = {
         semi: ['error', 'always'],
         indent: 'off',
         '@typescript-eslint/indent': ['error', 'tab', { SwitchCase: 1 }],
-        '@typescript-eslint/no-shadow': 'error',
+        '@typescript-eslint/no-shadow': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
