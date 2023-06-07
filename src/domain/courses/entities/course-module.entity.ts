@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
+import { Quiz } from './quiz.entity';
+
 import { ConsonantLesson } from 'src/domain/consonant-lesson/entities/consonant-lesson.entity';
-import { Quiz } from 'src/domain/quizzes/entities/quiz.entity';
 
 
 export type CourseModuleDocument = HydratedDocument<CourseModule>;

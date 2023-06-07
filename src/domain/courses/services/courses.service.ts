@@ -3,11 +3,11 @@ import { FilterQuery, Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
-import { Course, CourseDocument } from './entities/course.entity';
-import { CreateCourseModuleDto } from './dto/create-course-module.dto';
-import { CourseModule, CourseModuleDocument } from './entities/course-module.entity';
+import { CreateCourseDto } from '../dto/course/create-course.dto';
+import { UpdateCourseDto } from '../dto/course/update-course.dto';
+import { Course, CourseDocument } from '../entities/course.entity';
+import { CreateCourseModuleDto } from '../dto/course-module/create-course-module.dto';
+import { CourseModule, CourseModuleDocument } from '../entities/course-module.entity';
 
 
 @Injectable()
@@ -70,7 +70,7 @@ export class CoursesService {
 		moduleDto: CreateCourseModuleDto,
 	) {
 		const course = await (await this.findOne({ id: courseId })).populate(CourseModule.plural);
-		const module = await this._moduleModel.create({ ...moduleDto });
+		const module = await this._moduleModel.create(moduleDto);
 		course.modules.push(module);
 		await this._courseModel.findByIdAndUpdate(course._id, course);
 		return module;

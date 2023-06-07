@@ -15,7 +15,7 @@ import {
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
-import { CoursesService } from '../courses/courses.service';
+import { CoursesService } from '../courses/services/courses.service';
 import { GetUser } from '../auth/decorators';
 import { FilesService } from '../files/files.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';

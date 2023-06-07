@@ -9,10 +9,10 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
-import { CoursesService } from './courses.service';
-import { CreateCourseDto } from './dto/create-course.dto';
-import { UpdateCourseDto } from './dto/update-course.dto';
-import { CreateCourseModuleDto } from './dto/create-course-module.dto';
+import { CoursesService } from '../services/courses.service';
+import { CreateCourseDto } from '../dto/course/create-course.dto';
+import { UpdateCourseDto } from '../dto/course/update-course.dto';
+import { CreateCourseModuleDto } from '../dto/course-module/create-course-module.dto';
 
 
 @ApiBearerAuth('Bearer')

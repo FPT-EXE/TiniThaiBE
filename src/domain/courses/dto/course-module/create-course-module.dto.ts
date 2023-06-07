@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNotEmpty } from 'class-validator';
 
-import { ModuleType } from '../entities/course-module.entity';
+import { ModuleType } from '../../entities/course-module.entity';
 
 
 export class CreateCourseModuleDto {
@@ -13,4 +13,8 @@ export class CreateCourseModuleDto {
 	@IsEnum(ModuleType)
 	@IsNotEmpty()
 	public type: ModuleType;
+
+	@ApiProperty()
+	@IsNotEmpty()
+	public order: number;
 }

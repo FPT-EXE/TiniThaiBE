@@ -3,7 +3,6 @@ import { MulterModule } from '@nestjs/platform-express';
 
 import { FilesService  } from '././files.service';
 import { GridFsMulterConfigService } from './gridfs.factory';
-import { FilesController } from './files.controller';
 
 
 @Module({
@@ -12,7 +11,6 @@ import { FilesController } from './files.controller';
 			useClass: GridFsMulterConfigService,
 		}),
 	],
-	controllers: [FilesController],
 	providers: [GridFsMulterConfigService, FilesService],
 	exports: [FilesService]
 })
