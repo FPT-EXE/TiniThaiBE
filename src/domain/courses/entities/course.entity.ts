@@ -21,7 +21,7 @@ export class Course {
 
   
 	@Prop({ required: true })
-	public img: string;
+	public background: string;
 	
 	@Prop({ required: true })
 	public description: string;

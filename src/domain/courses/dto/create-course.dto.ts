@@ -15,7 +15,7 @@ export class CreateCourseDto {
 	public description: string;
 	
 	@ApiProperty()
-	public img: string;
+	public background: string;
 	
 	@ApiProperty()
 	@Min(0)
