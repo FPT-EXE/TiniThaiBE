@@ -68,7 +68,7 @@ export class UsersController {
 		@Body() { courseId }: RegisterCourseDto,
 	) {
 		const user = await this._usersSvc.findOneById(id);
-		const course = await this._courseSvc.findOne(courseId);
+		const course = await this._courseSvc.findOneById(courseId);
 		user.courses.push(course);
 		return this._usersSvc.update(id, user);
 	}

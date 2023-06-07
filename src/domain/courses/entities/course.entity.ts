@@ -1,5 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
+
+import { CourseModule } from './course-module.entity';
+
 
 
 export type CourseDocument = HydratedDocument<Course>;
@@ -34,6 +37,9 @@ export class Course {
 
 	@Prop({ required: true, min: 0, max: 10 })
 	public degreeOfDifficulty: number;
+
+	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: CourseModule.name }] })
+	public modules: Array<CourseModule>;
 
 }
 

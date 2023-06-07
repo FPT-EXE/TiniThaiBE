@@ -6,13 +6,13 @@ import {
 	Put,
 	Param,
 	Delete,
-	Redirect,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { UpdateCourseDto } from './dto/update-course.dto';
+import { CreateCourseModuleDto } from './dto/create-course-module.dto';
 
 
 @ApiBearerAuth('Bearer')
@@ -33,7 +33,7 @@ export class CoursesController {
 
 	@Get(':id')
 	public async findOne(@Param('id') id: string) {
-		return this._coursesService.findOne(id);
+		return this._coursesService.findOneById(id);
 	}
 
 	@Put(':id')
@@ -44,5 +44,10 @@ export class CoursesController {
 	@Delete(':id')
 	public async remove(@Param('id') id: string) {
 		return this._coursesService.remove(id);
+	}
+
+	@Post(':id/modules')
+	public async createCourseModule(@Param('id') id: string, @Body() moduleDto: CreateCourseModuleDto) {
+		return this._coursesService.createCourseModule(id, moduleDto);
 	}
 }

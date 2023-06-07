@@ -8,28 +8,38 @@ import { Quiz } from 'src/domain/quizzes/entities/quiz.entity';
 export type CourseModuleDocument = HydratedDocument<CourseModule>;
 
 export enum ModuleType {
-	ConsonantLesson   = 'consonantLesson',
-	VowelLesson       = 'vowelLesson',
-	SentenceStructure = 'sentenceStructure',
-	Quiz              = 'quiz'
+	ConsonantLesson   = 'consonantLessons',
+	VowelLesson       = 'vowelLessons',
+	SentenceStructure = 'sentenceStructures',
+	Quiz              = 'quizzes'
 }
 
 @Schema()
 export class CourseModule {
+	public static get plural(): string {
+		return 'modules';
+	}
+	public static get singular(): string {
+		return 'module';
+	}
+
 	@Prop({ required: true })
 	public name: string;
 
-	@Prop()
-	public totalLesson: number;
+	// @Prop()
+	// public totalLesson: number;
+
+	// @Prop()
+	// public currentProgress: number;
 
 	@Prop()
-	public currentProgress: number;
+	public order: number;
 
 	@Prop({enum: ModuleType})
 	public type: ModuleType;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: ConsonantLesson.name }] })
-	public lessons: Array<ConsonantLesson>;
+	public consonantLessons: Array<ConsonantLesson>;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Quiz.name }] })
 	public quizzes: Array<Quiz>;
