@@ -14,6 +14,10 @@ export class BootConfigService {
 		return this._configService.get('NODE_ENV');
 	}
 
+	public get APP_NAME(): string {
+		return this._configService.get('NODE_ENV');
+	}
+
 	public get JWT_EXPIRES_IN(): string {
 		return this._configService.get('JWT_EXPIRES_IN');
 	}
@@ -91,14 +95,14 @@ export class BootConfigService {
 	}
 
 	public get CLOUDINARY_NAME(): string {
-		return this._configService.get('CLOUD_NAME');
+		return this._configService.get('CLOUDINARY_NAME');
 	}
 
 	public get CLOUDINARY_API_KEY(): string {
-		return this._configService.get('CLOUD_API_KEY');
+		return this._configService.get('CLOUDINARY_API_KEY');
 	}
 
 	public get CLOUDINARY_API_SECRET(): string {
-		return this._configService.get('CLOUD_API_SECRET');
+		return this._configService.get('CLOUDINARY_API_SECRET');
 	}
 }
