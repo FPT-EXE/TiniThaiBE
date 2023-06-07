@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { INestApplication, RequestMethod } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import cookieParser from 'cookie-parser';
 
 import { AppModule } from './app.module';
 
@@ -26,7 +27,12 @@ async function bootstrap() {
 		exclude: [{ path: 'health', method: RequestMethod.GET }],
 	});
 	enableSwagger(app);
-	app.enableCors();
-	await app.listen(app.get(ConfigService).get('PORT'));
+	const configSvc = app.get(ConfigService);
+	app.enableCors({
+		origin: '*',
+		credentials: true
+	});
+	app.use(cookieParser(configSvc.get('COOKIE_SECRET')));
+	await app.listen(configSvc.get('PORT'));
 }
 bootstrap();

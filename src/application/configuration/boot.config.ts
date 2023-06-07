@@ -17,6 +17,10 @@ export class BootConfigService {
 	public get APP_NAME(): string {
 		return this._configService.get('NODE_ENV');
 	}
+	
+	public get FRONTEND_DOMAIN(): string {
+		return this._configService.get('FRONTEND_DOMAIN');
+	}
 
 	public get JWT_EXPIRES_IN(): string {
 		return this._configService.get('JWT_EXPIRES_IN');
@@ -24,6 +28,10 @@ export class BootConfigService {
 
 	public get JWT_SECRET(): string {
 		return this._configService.get('JWT_SECRET');
+	}
+
+	public get COOKIE_SECRET(): string {
+		return this._configService.get('COOKIE_SECRET');
 	}
 
 	public get MONGODB_URI(): string {
