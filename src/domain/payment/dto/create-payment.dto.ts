@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Min } from 'class-validator';
+import { ArrayNotEmpty, IsMongoId, IsNotEmpty, Min } from 'class-validator';
 
 
 
 export class CreatePaymentDto {
-	@Min(0)
 	@ApiProperty()
-	public amount: number;
+	@IsMongoId({each: true})
+	@IsNotEmpty({each: true})
+	@ArrayNotEmpty()
+	public courseIds: string[];
 }

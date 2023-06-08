@@ -13,6 +13,7 @@ import { Request } from 'express';
 
 import { GetUser, Public } from '../auth/decorators';
 import { User } from '../users/entities/user.entity';
+import { CoursesService } from '../courses/services/courses.service';
 
 import { VnPayService } from './vnpay.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -23,16 +24,22 @@ import { VnpIpnParams } from './types';
 @ApiTags('payments')
 @Controller('payments')
 export class PaymentsController {
-	constructor(private readonly _vnPaySvc: VnPayService) {}
+	constructor(
+		private readonly _vnPaySvc: VnPayService,
+		private readonly _coursesSvc: CoursesService,
+	) {}
 
 	// @Redirect()
 	@Post('url')
 	public async createPaymentUrl(
 		@Req() req: Request,
-			@Body() { amount }: CreatePaymentDto,
+			@Body() { courseIds }: CreatePaymentDto,
 			@GetUser() user: User,
 	): Promise<RedirectAction> {
 		const ipAddress = req.socket.remoteAddress.replace(/^.*:/, '');
+		const promises = courseIds.map(id => this._coursesSvc.findOneById(id));
+		const courses = await Promise.all(promises);
+		const  amount = courses.reduce((acc, course) => acc + course.price, 0);
 		const paymentUrl = await this._vnPaySvc.createPaymentUrl({
 			amount,
 			ipAddress,
