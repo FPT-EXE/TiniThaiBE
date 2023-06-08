@@ -28,10 +28,7 @@ async function bootstrap() {
 	});
 	enableSwagger(app);
 	const configSvc = app.get(ConfigService);
-	app.enableCors({
-		origin: '*',
-		credentials: true
-	});
+	app.enableCors();
 	app.use(cookieParser(configSvc.get('COOKIE_SECRET')));
 	await app.listen(configSvc.get('PORT'));
 }
