@@ -18,17 +18,21 @@ function enableSwagger(app: INestApplication) {
 		})
 		.build();
 	const document = SwaggerModule.createDocument(app, config);
-	SwaggerModule.setup('/v1/tinithai/api', app, document); // replace with process.env.API_PREFIX
+	const configSvc = app.get(ConfigService);
+	SwaggerModule.setup(`${configSvc.get('API_PREFIX')}/api`, app, document); // replace with process.env.API_PREFIX
 }
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
-	app.setGlobalPrefix('/v1/tinithai', {
+	const configSvc = app.get(ConfigService);
+	app.setGlobalPrefix(configSvc.get('API_PREFIX'), {
 		exclude: [{ path: 'health', method: RequestMethod.GET }],
 	});
 	enableSwagger(app);
-	const configSvc = app.get(ConfigService);
-	app.enableCors();
+	app.enableCors({
+		origin: configSvc.get('FRONTEND_DOMAIN'),
+		credentials: true
+	});
 	app.use(cookieParser(configSvc.get('COOKIE_SECRET')));
 	await app.listen(configSvc.get('PORT'));
 }
