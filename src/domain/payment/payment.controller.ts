@@ -7,9 +7,10 @@ import {
 	Req,
 	Get,
 	Query,
+	Res,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 import { GetUser, Public } from '../auth/decorators';
 import { User } from '../users/entities/user.entity';
@@ -19,6 +20,8 @@ import { VnPayService } from './vnpay.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { VnpIpnParams } from './types';
 
+import { BootConfigService } from 'src/application/configuration';
+
 
 @ApiBearerAuth('Bearer')
 @ApiTags('payments')
@@ -26,6 +29,7 @@ import { VnpIpnParams } from './types';
 export class PaymentsController {
 	constructor(
 		private readonly _vnPaySvc: VnPayService,
+		private readonly _configSvc: BootConfigService,
 		private readonly _coursesSvc: CoursesService,
 	) {}
 
@@ -58,8 +62,14 @@ export class PaymentsController {
 
 	@Public()
 	@Get('vnpay-ipn')
-	public async vnpIpn(@Query() query: VnpIpnParams) {
-		return await this._vnPaySvc.vnpIpn(query);
+	public async vnpIpn(@Query() query: VnpIpnParams, @Res() response: Response) {
+		try {
+			await this._vnPaySvc.vnpIpn(query);
+			response.redirect(`${this._configSvc.FRONTEND_DOMAIN}/payment?isSuccess=true`);
+		} catch {
+			response.redirect(`${this._configSvc.FRONTEND_DOMAIN}/payment?isSuccess=false`);
+		}
+		return;
 	}
 
 	@Get()
