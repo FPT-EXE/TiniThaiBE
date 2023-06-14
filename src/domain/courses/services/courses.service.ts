@@ -7,7 +7,9 @@ import { CreateCourseDto } from '../dto/course/create-course.dto';
 import { UpdateCourseDto } from '../dto/course/update-course.dto';
 import { Course, CourseDocument } from '../entities/course.entity';
 import { CreateCourseModuleDto } from '../dto/course-module/create-course-module.dto';
-import { CourseModule, CourseModuleDocument } from '../entities/course-module.entity';
+import { CourseModule } from '../entities/course-module.entity';
+
+import { CourseModuleService } from './course-module.service';
 
 
 @Injectable()
@@ -15,6 +17,7 @@ export class CoursesService {
 	constructor(
 		@InjectModel(Course.name) 		private readonly _courseModel: Model<Course>,
 		@InjectModel(CourseModule.name) private readonly _moduleModel: Model<CourseModule>,
+		private readonly _moduleSvc: CourseModuleService
 	) {}
 
 	public async create(createCourseDto: CreateCourseDto) {
@@ -44,7 +47,7 @@ export class CoursesService {
 		const { moduleIds } = updateCourseDto;
 		if (Boolean(moduleIds) && Boolean(moduleIds.length)) {
 			modules = (await (await this.findOne({ id })).populate(CourseModule.plural)).modules || [];
-			const promises = moduleIds.map((id) => this.findModuleById(id));
+			const promises = moduleIds.map((id) => this._moduleSvc.findModuleById(id));
 			const addedModules = await Promise.all(promises);
 			modules.push(...addedModules);
 		}
@@ -73,13 +76,6 @@ export class CoursesService {
 		const module = await this._moduleModel.create(moduleDto);
 		course.modules.push(module);
 		await this._courseModel.findByIdAndUpdate(course._id, course);
-		return module;
-	}
-
-	public async findModuleById(id: string): Promise<CourseModuleDocument | null> {
-		const module = await this._moduleModel
-			.findById(id)
-			.orFail(() => new NotFoundException('Module not found'));
 		return module;
 	}
 

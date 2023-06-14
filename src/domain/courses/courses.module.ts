@@ -11,20 +11,42 @@ import { QuizzesService } from './services/quizzes.service';
 import { QuizzesController } from './controller/quizzes.controller';
 import { Course, CourseSchema } from './entities/course.entity';
 import { Quiz, QuizSchema } from './entities/quiz.entity';
-import { CourseModule, CourseModuleSchema } from './entities/course-module.entity';
-import { ConsonantLesson, ConsonantLessonSchema } from './entities/consonant-lesson.entity';
+import {
+	CourseModule,
+	CourseModuleSchema,
+} from './entities/course-module.entity';
+import {
+	ConsonantLesson,
+	ConsonantLessonSchema,
+} from './entities/consonant-lesson.entity';
+import { ConsonantLessonsController } from './controller/consonant-lessons.controller';
+import { ConsonantLessonsService } from './services/consonant-lessons.service';
 
 
 @Module({
 	imports: [
 		MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
-		MongooseModule.forFeature([{ name: CourseModule.name, schema: CourseModuleSchema }]),
+		MongooseModule.forFeature([
+			{ name: CourseModule.name, schema: CourseModuleSchema },
+		]),
 		MongooseModule.forFeature([{ name: Quiz.name, schema: QuizSchema }]),
-		MongooseModule.forFeature([{ name: ConsonantLesson.name, schema: ConsonantLessonSchema }]),
-		CloudinaryModule
+		MongooseModule.forFeature([
+			{ name: ConsonantLesson.name, schema: ConsonantLessonSchema },
+		]),
+		CloudinaryModule,
 	],
-	controllers: [CoursesController, ModulesController, QuizzesController],
-	providers: [CoursesService, CourseModuleService, QuizzesService],
-	exports: [CoursesService]
+	controllers: [
+		CoursesController,
+		ModulesController,
+		QuizzesController,
+		ConsonantLessonsController,
+	],
+	providers: [
+		CoursesService,
+		CourseModuleService,
+		QuizzesService,
+		ConsonantLessonsService,
+	],
+	exports: [CoursesService],
 })
 export class CoursesModule {}

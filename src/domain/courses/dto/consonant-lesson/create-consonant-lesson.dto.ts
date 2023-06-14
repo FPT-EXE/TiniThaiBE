@@ -5,10 +5,6 @@ import { IsNotEmpty } from 'class-validator';
 export class CreateConsonantLessonDto {
 	@ApiProperty()
 	@IsNotEmpty()
-	public name: string;
-
-	@ApiProperty()
-	@IsNotEmpty()
 	public consonant: string;
 
 	@ApiProperty()

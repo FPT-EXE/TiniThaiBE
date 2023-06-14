@@ -30,10 +30,10 @@ import { AuthMiddleware } from './auth.middleware';
 	providers: [
 		AuthService,
 		FirebaseAuthStrategy,
-		{
-			provide: APP_GUARD,
-			useClass: JwtAuthGuard,
-		},
+		// {
+		// 	provide: APP_GUARD,
+		// 	useClass: JwtAuthGuard,
+		// },
 	],
 })
 export class AuthModule implements NestModule {

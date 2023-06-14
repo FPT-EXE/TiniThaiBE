@@ -27,12 +27,6 @@ export class CourseModule {
 	@Prop({ required: true })
 	public name: string;
 
-	// @Prop()
-	// public totalLesson: number;
-
-	// @Prop()
-	// public currentProgress: number;
-
 	@Prop()
 	public order: number;
 
