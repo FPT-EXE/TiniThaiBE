@@ -6,20 +6,24 @@ export type ConsonantLessonDocument = HydratedDocument<ConsonantLesson>;
 
 @Schema()
 export class ConsonantLesson {
-	@Prop({ required: true })
-	public name: string;
+	public static get plural(): string {
+		return 'consonantLessons';
+	}
+	public static get singular(): string {
+		return 'consonantLesson';
+	}
 
-	@Prop()
+	@Prop({ required: true })
 	public consonant: string;
 
-	@Prop()
+	@Prop({ required: true })
 	public symbolicWord: string;
 
-	@Prop()
+	@Prop({ required: true })
 	public spelling: string;
 
-	@Prop()
+	@Prop({ required: true })
 	public mean: string;
 }
 
-export const LessonSchema = SchemaFactory.createForClass(ConsonantLesson);
+export const ConsonantLessonSchema = SchemaFactory.createForClass(ConsonantLesson);

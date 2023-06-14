@@ -5,13 +5,14 @@ import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 
 import { CoursesService } from './services/courses.service';
 import { CoursesController } from './controller/courses.controller';
-import { Course, CourseSchema } from './entities/course.entity';
-import { CourseModule, CourseModuleSchema } from './entities/course-module.entity';
 import { ModulesController } from './controller/modules.controller';
 import { CourseModuleService } from './services/course-module.service';
 import { QuizzesService } from './services/quizzes.service';
 import { QuizzesController } from './controller/quizzes.controller';
+import { Course, CourseSchema } from './entities/course.entity';
 import { Quiz, QuizSchema } from './entities/quiz.entity';
+import { CourseModule, CourseModuleSchema } from './entities/course-module.entity';
+import { ConsonantLesson, ConsonantLessonSchema } from './entities/consonant-lesson.entity';
 
 
 @Module({
@@ -19,6 +20,7 @@ import { Quiz, QuizSchema } from './entities/quiz.entity';
 		MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
 		MongooseModule.forFeature([{ name: CourseModule.name, schema: CourseModuleSchema }]),
 		MongooseModule.forFeature([{ name: Quiz.name, schema: QuizSchema }]),
+		MongooseModule.forFeature([{ name: ConsonantLesson.name, schema: ConsonantLessonSchema }]),
 		CloudinaryModule
 	],
 	controllers: [CoursesController, ModulesController, QuizzesController],
