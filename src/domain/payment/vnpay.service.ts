@@ -12,7 +12,8 @@ import { UsersService } from '../users/users.service';
 import { Course } from '../courses/entities/course.entity';
 import { PurchasedCourseService } from '../courses/services/purchased-course.service';
 import { CoursesService } from '../courses/services/courses.service';
-import { PurchasedCourse } from '../courses/entities/purchased-course.entity';
+import { CourseStatus, PurchasedCourse } from '../courses/entities/purchased-course.entity';
+import { UpdatePurchasedCourseDto } from '../courses/dto/purchased-course/update-purchased-course.dto.';
 
 import {
 	VnpTransactionParams,
@@ -77,7 +78,10 @@ export class VnPayService {
 		if (!isValid) {
 			throw new InternalServerErrorException('Checksum failed');
 		}
-		return { vnpResCode: VnpResCode.Success, message: 'Payment success' };
+		return { 
+			vnpResCode: VnpResCode.Success, 
+			message: PaymentStatus.FailedForChecksum
+		};
 	}
 
 	public async vnpIpn(inpParams: VnpIpnParams): Promise<VnpPaymentResponse> {
@@ -85,10 +89,10 @@ export class VnPayService {
 		const { vnp_ResponseCode: vnpResCode } = inpParams;
 		let result: VnpPaymentResponse = {
 			vnpResCode: VnpResCode.ChecksumFailed,
-			message: 'Fail for checksum',
+			message: PaymentStatus.FailedForChecksum,
 		};
 		if (!isValid) {
-			await this._updatePaymentStatus(inpParams, 'Fail for checksum');
+			await this._updatePaymentStatus(inpParams, PaymentStatus.FailedForChecksum);
 			return result;
 		}
 		switch (vnpResCode) {
@@ -96,28 +100,28 @@ export class VnPayService {
 				await this._updatePaymentStatus(inpParams);
 				result = {
 					vnpResCode: VnpResCode.Success,
-					message: 'Success',
+					message: PaymentStatus.Success,
 				};
 				break;
 			case VnpResCode.InvalidMerchant:
-				await this._updatePaymentStatus(inpParams, 'InvalidMerchant');
+				await this._updatePaymentStatus(inpParams, PaymentStatus.FailedForInvalidMerchant);
 				result = {
 					vnpResCode: VnpResCode.InvalidMerchant,
-					message: 'InvalidMerchant',
+					message: PaymentStatus.FailedForInvalidMerchant,
 				};
 				break;
 			case VnpResCode.InvalidAmount:
-				await this._updatePaymentStatus(inpParams, 'InvalidAmount');
+				await this._updatePaymentStatus(inpParams, PaymentStatus.FailedForInvalidAmount);
 				result = {
 					vnpResCode: VnpResCode.InvalidAmount,
-					message: 'InvalidAmount',
+					message: PaymentStatus.FailedForInvalidAmount,
 				};
 				break;
 			case VnpResCode.InvalidOrder:
-				await this._updatePaymentStatus(inpParams, 'InvalidOrder');
+				await this._updatePaymentStatus(inpParams, PaymentStatus.FailedForInvalidOrder);
 				result = {
 					vnpResCode: VnpResCode.InvalidOrder,
-					message: 'InvalidOrder',
+					message: PaymentStatus.FailedForInvalidOrder,
 				};
 				break;
 		}
@@ -198,8 +202,9 @@ export class VnPayService {
 		return paymentMDb;
 	}
 
-	private async _updatePaymentStatus(params: VnpIpnParams, status = 'Success') {
-		const { vnp_TxnRef:paymentId } = params;
+	private async _updatePaymentStatus(params: VnpIpnParams, status = PaymentStatus.Success) {
+		const { vnp_TxnRef: paymentId } = params;
+		const payment = await this._paymentModel.findById(paymentId);
 		await this._paymentModel.findByIdAndUpdate(
 			paymentId,
 			{
@@ -208,6 +213,12 @@ export class VnPayService {
 			},
 			{ new: true },
 		);
+		if (status === PaymentStatus.Success) {
+			await this._purchasedCourseSvc.updateMany(
+				(payment.purchasedCourses as unknown) as string[],
+				{ status: CourseStatus.Paid}
+			);
+		}
 	}
 
 	public async findAll(): Promise<PaymentDocument[]> {

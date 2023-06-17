@@ -25,7 +25,7 @@ export type VnpIpnParams = VnpParams & {
 
 export type VnpPaymentResponse = {
 	vnpResCode: VnpResCode,
-	message: string,
+	message: PaymentStatus,
 }
 
 export enum VnpResCode {
@@ -41,6 +41,7 @@ export enum PaymentStatus {
 	Success = 'Success',
 	FailedForInvalidMerchant   = 'InvalidMerchant',
 	FailedForInvalidAmount     = 'InvalidAmount',
+	FailedForInvalidOrder      = 'InvalidOrder',
 	FailedForChecksum          = 'FailedForChecksum'
 }
 

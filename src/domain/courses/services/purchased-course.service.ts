@@ -38,17 +38,17 @@ export class PurchasedCourseService {
 		return await this.create(pCourses);
 	}
 
-	public async update(
-		updatePCourseDtos: UpdatePurchasedCourseDto[],
+	public async updateMany(
+		ids: string[],
+		updatePCourseDto: UpdatePurchasedCourseDto,
 	): Promise<UpdateWriteOpResult> {
-		const ids = updatePCourseDtos.map((u) => u.purchasedCourseId);
 		return await this._pCrsModel.updateMany<PurchasedCourseDocument>(
 			{
 				_id: {
 					$in: ids,
 				},
 			},
-			updatePCourseDtos,
+			updatePCourseDto,
 			{
 				new: true,
 			},
