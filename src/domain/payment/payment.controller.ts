@@ -13,8 +13,9 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { GetUser, Public } from '../auth/decorators';
-import { User } from '../users/entities/user.entity';
+import { HttpUser } from '../users/entities/user.entity';
 import { CoursesService } from '../courses/services/courses.service';
+import { UsersService } from '../users/users.service';
 
 import { VnPayService } from './vnpay.service';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -31,6 +32,7 @@ export class PaymentsController {
 		private readonly _vnPaySvc: VnPayService,
 		private readonly _configSvc: BootConfigService,
 		private readonly _coursesSvc: CoursesService,
+		private readonly _userSvc: UsersService,
 	) {}
 
 	// @Redirect()
@@ -38,16 +40,18 @@ export class PaymentsController {
 	public async createPaymentUrl(
 		@Req() req: Request,
 			@Body() { courseIds }: CreatePaymentDto,
-			@GetUser() user: User,
+			@GetUser() {_id: userId}: HttpUser,
 	): Promise<RedirectAction> {
 		const ipAddress = req.socket.remoteAddress.replace(/^.*:/, '');
-		const promises = courseIds.map(id => this._coursesSvc.findOneById(id));
-		const courses = await Promise.all(promises);
-		const  amount = courses.reduce((acc, course) => acc + course.price, 0);
+		// const promises = courseIds.map(id => this._coursesSvc.findOneById(id));
+		// const courses = await Promise.all(promises);
+		// await this._vnPaySvc.addCoursesForUser(userId, courses);
+		// const amount = courses.reduce((acc, course) => acc + course.price, 0);
 		const paymentUrl = await this._vnPaySvc.createPaymentUrl({
-			amount,
+			// amount,
+			courseIds,
 			ipAddress,
-			user
+			userId
 		});
 		return {
 			url: paymentUrl,

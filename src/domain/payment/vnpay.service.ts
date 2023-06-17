@@ -7,8 +7,12 @@ import { Model } from 'mongoose';
 
 import { BootConfigService } from '../../application/configuration/boot.config';
 import { formatYYYYMMDDHHMMSS, sortObject } from '../../application/utils';
-import { User } from '../users/entities/user.entity';
+import { User, UserDocument } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
+import { Course } from '../courses/entities/course.entity';
+import { PurchasedCourseService } from '../courses/services/purchased-course.service';
+import { CoursesService } from '../courses/services/courses.service';
+import { PurchasedCourse } from '../courses/entities/purchased-course.entity';
 
 import {
 	VnpTransactionParams,
@@ -23,9 +27,9 @@ import { Payment, PaymentDocument } from './entities/payment.entity';
 
 
 type CreatePaymentParam = {
-	amount: number,
+	courseIds: string[],
 	ipAddress: string,
-	user: User,
+	userId: string,
 };
 
 @Injectable()
@@ -33,19 +37,22 @@ export class VnPayService {
 	constructor(
 		private readonly _configSvc: BootConfigService,
 		private readonly _userSvc: UsersService,
+		private readonly _coursesSvc: CoursesService,
+		private readonly _purchasedCourseSvc: PurchasedCourseService,
 		@InjectModel(Payment.name) private readonly _paymentModel: Model<Payment>,
 	) {}
 
 	public async createPaymentUrl({
-		amount,
+		courseIds,
 		ipAddress,
-		user
+		userId
 	}: CreatePaymentParam): Promise<string> {
 		const {
 			date,
 			_id: orderId,
 			content: orderInfo,
-		} = await this._storePaymentRequest(amount, user);
+			amount
+		} = await this._storePaymentRequest(courseIds, userId);
 		const vnpUrl = this._configSvc.VNP_URL;
 		const secretKey = this._configSvc.VNP_HASHSECRET;
 		const transactionParams = sortObject(
@@ -164,18 +171,30 @@ export class VnPayService {
 		};
 	}
 
-	private async _storePaymentRequest(amount: number, {email}: User): Promise<PaymentDocument> {
-		const payment = new Payment();
-		payment.amount   = amount;
-		payment.bankCode = 'unknown';
-		payment.date     = formatYYYYMMDDHHMMSS(new Date());
-		payment.content  = 'Payment:' + payment.date,
-		payment.status   = PaymentStatus.Initial;
-		const userMDb = await (await this._userSvc.findOne({ email })).populate(Payment.plural);
-		payment.user = userMDb;
-		const paymentMDb = await this._paymentModel.create(payment);
-		userMDb.payments.push(paymentMDb);
-		await this._userSvc.update(userMDb._id.toString(), userMDb);
+	private async _storePaymentRequest(
+		courseIds: string[], 
+		userId: string
+	): Promise<PaymentDocument> {
+		const coursesPromise = this._coursesSvc.findAll({
+			_id: {
+				$in: courseIds
+			}
+		});
+		const userPromise        = this._userSvc.findOneById(userId, [Payment.plural, PurchasedCourse.plural]);
+		const [courses, userMDb] = await Promise.all([coursesPromise, userPromise]);
+		const amount             = courses.reduce((acc, course) => acc + course.price, 0);
+		const payDate            = formatYYYYMMDDHHMMSS(new Date());
+		const purchasedCourses   = await this._purchasedCourseSvc.createPurchases(courses);
+		const paymentMDb = await this._paymentModel.create({
+			amount,
+			bankCode: 'unknown',
+			date    : payDate,
+			content : 'Payment:' + payDate,
+			status  : PaymentStatus.Initial,
+			user    : userMDb,
+			purchasedCourses
+		});
+		await this._storeUserTransaction(userMDb, paymentMDb, purchasedCourses);
 		return paymentMDb;
 	}
 
@@ -193,5 +212,11 @@ export class VnPayService {
 
 	public async findAll(): Promise<PaymentDocument[]> {
 		return this._paymentModel.find().populate(User.singular);
+	}
+
+	private async _storeUserTransaction(user: UserDocument, payment: PaymentDocument, courses: PurchasedCourse[]) {
+		user.payments.push(payment);
+		user.purchasedCourses.push(...courses);
+		await this._userSvc.update(user._id.toString(), user);
 	}
 }

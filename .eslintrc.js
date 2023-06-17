@@ -36,7 +36,7 @@ module.exports = {
     'import/order': ['error', { 'newlines-between': 'always' }],
     'import/named': 'off',
     'no-undef': 'off',
-    quotes: ['error', 'single', { avoidEscape: true }],
+    quotes: ['error', 'single', { avoidEscape: true }]
   },
   // For *.ts files
   overrides: [

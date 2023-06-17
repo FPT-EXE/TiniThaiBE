@@ -12,6 +12,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { UsersService } from '../users/users.service';
 import { HttpUser, User } from '../users/entities/user.entity';
+import { PurchasedCourse } from '../courses/entities/purchased-course.entity';
 
 import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { FirebaseUser } from './types';
@@ -66,7 +67,7 @@ export class AuthController {
 
 	@Get('profile')
 	public async getProfile(@GetUser() httpUser: HttpUser) {
-		const user = await this._usersSvc.findOneById(httpUser._id);
+		const user = await this._usersSvc.findOneById(httpUser._id, [PurchasedCourse.plural]);
 		return user;
 	}
 }

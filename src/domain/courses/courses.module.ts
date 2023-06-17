@@ -21,6 +21,8 @@ import {
 } from './entities/consonant-lesson.entity';
 import { ConsonantLessonsController } from './controller/consonant-lessons.controller';
 import { ConsonantLessonsService } from './services/consonant-lessons.service';
+import { PurchasedCourse, PurchasedCourseSchema } from './entities/purchased-course.entity';
+import { PurchasedCourseService } from './services/purchased-course.service';
 
 
 @Module({
@@ -33,6 +35,7 @@ import { ConsonantLessonsService } from './services/consonant-lessons.service';
 		MongooseModule.forFeature([
 			{ name: ConsonantLesson.name, schema: ConsonantLessonSchema },
 		]),
+		MongooseModule.forFeature([{ name: PurchasedCourse.name, schema: PurchasedCourseSchema }]),
 		CloudinaryModule,
 	],
 	controllers: [
@@ -46,7 +49,8 @@ import { ConsonantLessonsService } from './services/consonant-lessons.service';
 		CourseModuleService,
 		QuizzesService,
 		ConsonantLessonsService,
+		PurchasedCourseService
 	],
-	exports: [CoursesService],
+	exports: [CoursesService, PurchasedCourseService],
 })
 export class CoursesModule {}

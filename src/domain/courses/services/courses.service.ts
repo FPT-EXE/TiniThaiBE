@@ -24,8 +24,8 @@ export class CoursesService {
 		return this._courseModel.create(createCourseDto);
 	}
 
-	public findAll() {
-		return this._courseModel.find();
+	public findAll(filter?: FilterQuery<CourseDocument>) {
+		return this._courseModel.find(filter);
 	}
 
 	public async findOneById(id: string): Promise<CourseDocument | null> {

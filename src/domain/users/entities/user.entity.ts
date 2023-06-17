@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, Types } from 'mongoose';
 
-import { Course } from '../../courses/entities/course.entity';
-
-import { Payment } from 'src/domain/payment/entities/payment.entity';
+import { PurchasedCourse } from '../../courses/entities/purchased-course.entity';
+import { Payment } from '../../payment/entities/payment.entity';
 
 
 export enum Role {
@@ -40,8 +39,8 @@ export class User {
 	@Prop()
 	public avatar: string;
 
-	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: Course.name }] })
-	public courses: Array<Course>;
+	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: PurchasedCourse.name }] })
+	public purchasedCourses: Array<PurchasedCourse>;
 
 	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }] })
 	public payments: Array<Payment>;

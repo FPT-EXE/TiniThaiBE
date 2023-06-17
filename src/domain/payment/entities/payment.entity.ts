@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
+import { PurchasedCourse } from 'src/domain/courses/entities/purchased-course.entity';
 import { User } from 'src/domain/users/entities/user.entity';
 
 
@@ -32,6 +33,9 @@ export class Payment {
 
 	@Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
 	public user: User;
+
+	@Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: PurchasedCourse.name }] })
+	public purchasedCourses: Array<PurchasedCourse>;
 }
 
 export const PaymentSchema = SchemaFactory.createForClass(Payment);
