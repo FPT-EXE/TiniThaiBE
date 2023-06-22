@@ -22,7 +22,13 @@ export class UsersService {
 	}
 
 	public async findAll(): Promise<UserDocument[]> {
-		return this._userModel.find();
+		return this._userModel.find().populate({
+			path: PurchasedCourse.plural,
+			populate: {
+				path: Course.singular,
+				model: Course.name
+			}
+		});
 	}
 
 	public async findOneById(id: string, pathNavs: string[] = []): Promise<UserDocument> {
