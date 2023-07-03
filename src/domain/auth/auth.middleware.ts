@@ -7,7 +7,9 @@ import { Request, Response, NextFunction } from 'express';
 export class AuthMiddleware implements NestMiddleware {
 	public use(req: Request, res: Response, next: NextFunction) {
 		const token = req.cookies['access_token'];
-		req.headers.authorization = `Bearer ${token}`;
+		if (token) {
+			req.headers.authorization = `Bearer ${token}`;
+		}
 		next();
 	}
 }
