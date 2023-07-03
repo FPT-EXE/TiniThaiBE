@@ -72,11 +72,12 @@ jobs:
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
+            echo $REMOTE_MONGODB_URI
             git stash
             git -C ${{ env.REPO_NAME }} pull || git clone ${{ github.server_url }}/${{ github.repository }} ${{ env.REPO_NAME }}
             cd $PWD/${{ env.REPO_NAME }}
             yarn install --frozen-lockfile --network-timeout 1000000000
-            yarn run start
+            pm2 restart ${{ env.REPO_NAME }}
 
       - name: Remove Github Actions IP from security group
         run: |
