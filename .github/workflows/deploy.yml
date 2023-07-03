@@ -86,6 +86,7 @@ jobs:
             echo "I am $FOO, thanks" 
             echo "I am $BAR, thanks" 
             echo "sha: $SHA" 
+            export test=$SHA
       - name: Remove Github Actions IP from security group
         run: |
           aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
