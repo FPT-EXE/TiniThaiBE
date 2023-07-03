@@ -23,7 +23,8 @@ jobs:
 
       - name: Deploy to prod server
         uses: appleboy/ssh-action@master
-        env: 
+        env:  
+          REPO_NAME                  : ${{ github.event.repository.name }}
           GIT_SHA                    : ${{ github.sha }}
           PORT                       : ${{ secrets.PORT }}
           NODE_ENV                   : ${{ secrets.NODE_ENV }}
@@ -57,14 +58,24 @@ jobs:
           host: ${{ secrets.HOST_PUBLIC_IP }}
           username: ec2-user
           key: ${{ secrets.AWS_SSH_KEY }}
-          passphrase: ${{ secrets.AWS_SSH_PASSPHRASE }}  
+          passphrase: ${{ secrets.AWS_SSH_PASSPHRASE }}
+          envs: "GIT_SHA, PORT, NODE_ENV, APP_NAME, JWT_EXPIRES_IN, 
+            JWT_SECRET, JWT_SECRET, COOKIE_SECRET, FRONTEND_DOMAIN, 
+            API_PREFIX, REMOTE_MONGODB_URI, MDB_NAME, VNP_URL, 
+            VNP_RETURN_URL, VNP_HASHSECRET, VNP_TMNCODE, FIREBASE_TYPE, 
+            FIREBASE_PROJECT_ID, FIREBASE_PRIVATE_KEY_ID, 
+            FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL, 
+            FIREBASE_CLIENT_ID, FIREBASE_AUTH_URI, FIREBASE_TOKEN_URI
+            , FIREBASE_AUTH_PROVIDER_X509, FIREBASE_CLIENT_X509, 
+            FIREBASE_UNIVERSAL_DOMAIN, CLOUDINARY_NAME, 
+            CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET"
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             git stash
-            git -C ${{ github.repository_owner }} pull || git clone ${{ github.server_url }}/${{ github.repository }} ${{ github.repository_owner }}
-            cd $PWD/${{ github.repository_owner }}
-            yarn install --production --frozen-lockfile --network-timeout 1000000000
+            git -C ${{ env.REPO_NAME }} pull || git clone ${{ github.server_url }}/${{ github.repository }} ${{ env.REPO_NAME }}
+            cd $PWD/${{ env.REPO_NAME }}
+            yarn install --frozen-lockfile --network-timeout 1000000000
             yarn run start
 
       - name: Remove Github Actions IP from security group
