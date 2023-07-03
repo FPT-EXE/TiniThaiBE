@@ -22,7 +22,6 @@ jobs:
           AWS_DEFAULT_REGION   : ${{ secrets.AWS_DEFAULT_REGION }}
 
       - name: Deploy to prod server
-        uses: appleboy/ssh-action@v0.1.10
         env:  
           REPO_NAME                  : ${{ github.event.repository.name }}
           GIT_SHA                    : ${{ github.sha }}
@@ -54,6 +53,7 @@ jobs:
           CLOUDINARY_NAME            : ${{ secrets.CLOUDINARY_NAME }}
           CLOUDINARY_API_KEY         : ${{ secrets.CLOUDINARY_API_KEY }}
           CLOUDINARY_API_SECRET      : ${{ secrets.CLOUDINARY_API_SECRET }}
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_PUBLIC_IP }}
           username: ec2-user
