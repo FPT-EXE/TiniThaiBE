@@ -62,7 +62,13 @@ jobs:
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
             git stash
-            if cd ${{ github.repository }}; then git pull; else git clone ${{ github.server_url }}/${{ github.repository }} repo; fi
+            if cd ${{ github.repository }}; 
+            then 
+              git pull; 
+            else 
+              git clone ${{ github.server_url }}/${{ github.repository }};
+            fi
+            cd ./${{ github.repository }}
             yarn install --production --frozen-lockfile --network-timeout 1000000000
             yarn run start
 
