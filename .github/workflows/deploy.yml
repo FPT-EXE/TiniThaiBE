@@ -55,8 +55,9 @@ jobs:
           CLOUDINARY_API_SECRET      : ${{ secrets.CLOUDINARY_API_SECRET }}
         with:
           host: ${{ secrets.HOST_PUBLIC_IP }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.AWS_SSH_KEY }}
+          passphrase: ${{ secrets.AWS_SSH_PASSPHRASE }}  
           script: |
             export NVM_DIR=~/.nvm
             source ~/.nvm/nvm.sh
