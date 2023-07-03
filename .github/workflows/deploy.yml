@@ -1,0 +1,75 @@
+name: ci-cd pipeline deploy to prod
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Github action IP
+        id: ip
+        uses: haythem/public-ip@v1.2
+
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID    : ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION   : ${{ secrets.AWS_DEFAULT_REGION }}
+
+      - name: Deploy to prod server
+        uses: appleboy/ssh-action@master
+        env: 
+          GIT_SHA                    : ${{ github.sha }}
+          PORT                       : ${{ secrets.PORT }}
+          NODE_ENV                   : ${{ secrets.NODE_ENV }}
+          APP_NAME                   : ${{ secrets.APP_NAME }}
+          JWT_EXPIRES_IN             : ${{ secrets.JWT_EXPIRES_IN }}
+          JWT_SECRET                 : ${{ secrets.JWT_SECRET }}
+          COOKIE_SECRET              : ${{ secrets.COOKIE_SECRET }}
+          FRONTEND_DOMAIN            : ${{ secrets.FRONTEND_DOMAIN }}
+          API_PREFIX                 : ${{ secrets.API_PREFIX }}
+          REMOTE_MONGODB_URI         : ${{ secrets.REMOTE_MONGODB_URI }}
+          MDB_NAME                   : ${{ secrets.MDB_NAME }}
+          VNP_URL                    : ${{ secrets.VNP_URL }}
+          VNP_RETURN_URL             : ${{ secrets.VNP_RETURN_URL }}
+          VNP_HASHSECRET             : ${{ secrets.VNP_HASHSECRET }}
+          VNP_TMNCODE                : ${{ secrets.VNP_TMNCODE }}
+          FIREBASE_TYPE              : ${{ secrets.FIREBASE_TYPE }}
+          FIREBASE_PROJECT_ID        : ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_PRIVATE_KEY_ID    : ${{ secrets.FIREBASE_PRIVATE_KEY_ID }}
+          FIREBASE_PRIVATE_KEY       : ${{ secrets.FIREBASE_PRIVATE_KEY }}
+          FIREBASE_CLIENT_EMAIL      : ${{ secrets.FIREBASE_CLIENT_EMAIL }}
+          FIREBASE_CLIENT_ID         : ${{ secrets.FIREBASE_CLIENT_ID }}
+          FIREBASE_AUTH_URI          : ${{ secrets.FIREBASE_AUTH_URI }}
+          FIREBASE_TOKEN_URI         : ${{ secrets.FIREBASE_TOKEN_URI }}
+          FIREBASE_AUTH_PROVIDER_X509: ${{ secrets.FIREBASE_AUTH_PROVIDER_X509 }}
+          FIREBASE_CLIENT_X509       : ${{ secrets.FIREBASE_CLIENT_X509 }}
+          FIREBASE_UNIVERSAL_DOMAIN  : ${{ secrets.FIREBASE_UNIVERSAL_DOMAIN }}
+          CLOUDINARY_NAME            : ${{ secrets.CLOUDINARY_NAME }}
+          CLOUDINARY_API_KEY         : ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET      : ${{ secrets.CLOUDINARY_API_SECRET }}
+        with:
+          host: ${{ secrets.HOST_PUBLIC_IP }}
+          username: ubuntu
+          key: ${{ secrets.AWS_SSH_KEY }}
+          script: |
+            export NVM_DIR=~/.nvm
+            source ~/.nvm/nvm.sh
+            git stash
+            git pull origin master
+            yarn install --production --frozen-lockfile --network-timeout 1000000000
+            yarn run start
+
+      - name: Remove Github Actions IP from security group
+        run: |
+          aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+        env:
+          AWS_ACCESS_KEY_ID    : ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION   : ${{ secrets.AWS_DEFAULT_REGION }}
+        if: always()

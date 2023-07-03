@@ -38,6 +38,6 @@ import { AuthMiddleware } from './auth.middleware';
 })
 export class AuthModule implements NestModule {
 	public configure(consumer: MiddlewareConsumer) {
-		consumer.apply(AuthMiddleware).exclude('/v1/tinithai/auth/login').forRoutes('*');
+		consumer.apply(AuthMiddleware).forRoutes('*');
 	}
 }

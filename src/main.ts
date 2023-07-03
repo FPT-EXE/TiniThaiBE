@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 
-function enableSwagger(app: INestApplication) {
+const enableSwagger = (app: INestApplication) => {
 	const config = new DocumentBuilder()
 		.setTitle('TiniThai')
 		.setDescription('TiniThai API')
@@ -20,7 +20,12 @@ function enableSwagger(app: INestApplication) {
 	const document = SwaggerModule.createDocument(app, config);
 	const configSvc = app.get(ConfigService);
 	SwaggerModule.setup(`${configSvc.get('API_PREFIX')}/api`, app, document); // replace with process.env.API_PREFIX
-}
+};
+
+const getFeDomain = (configSvc: ConfigService) =>
+	configSvc.get('NODE_ENV') === 'local'
+		? configSvc.get('LOCAL_FRONTEND_DOMAIN')
+		: configSvc.get('FRONTEND_DOMAIN');
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -30,8 +35,8 @@ async function bootstrap() {
 	});
 	enableSwagger(app);
 	app.enableCors({
-		origin: configSvc.get('FRONTEND_DOMAIN'),
-		credentials: true
+		origin: getFeDomain(configSvc),
+		credentials: true,
 	});
 	app.use(cookieParser(configSvc.get('COOKIE_SECRET')));
 	await app.listen(configSvc.get('PORT'));

@@ -6,6 +6,19 @@ import { ConfigService } from '@nestjs/config';
 export class BootConfigService {
 	constructor(private _configService: ConfigService) {}
 
+	public get isRunLocal(): boolean {
+		const localEnvs = new Set()
+			.add('local')
+			.add(undefined)
+			.add('')
+			.add('test');
+		return localEnvs.has(this.NODE_ENV);
+	}
+
+	public get GIT_SHA(): string {
+		return this._configService.get('GIT_SHA');
+	}
+
 	public get PORT(): number {
 		return Number(this._configService.get('PORT') || 3000);
 	}
@@ -17,9 +30,11 @@ export class BootConfigService {
 	public get APP_NAME(): string {
 		return this._configService.get('NODE_ENV');
 	}
-	
+
 	public get FRONTEND_DOMAIN(): string {
-		return this._configService.get('FRONTEND_DOMAIN');
+		return this.NODE_ENV === 'local'
+			? this._configService.get('LOCAL_FRONTEND_DOMAIN')
+			: this._configService.get('FRONTEND_DOMAIN');
 	}
 
 	public get JWT_EXPIRES_IN(): string {
@@ -34,8 +49,16 @@ export class BootConfigService {
 		return this._configService.get('COOKIE_SECRET');
 	}
 
-	public get MONGODB_URI(): string {
-		return this._configService.get('MONGODB_URI');
+	public get LOCAL_MONGODB_URI(): string {
+		return this._configService.get('LOCAL_MONGODB_URI');
+	}
+
+	public get REMOTE_MONGODB_URI(): string {
+		return this._configService.get('REMOTE_MONGODB_URI');
+	}
+
+	public get MDB_NAME(): string {
+		return this._configService.get('MDB_NAME');
 	}
 
 	public get CERT_PATH(): string {
@@ -71,7 +94,9 @@ export class BootConfigService {
 	}
 
 	public get FIREBASE_PRIVATE_KEY(): string {
-		return this._configService.get('FIREBASE_PRIVATE_KEY').replace(/\\n/gm, '\n');
+		return this._configService
+			.get('FIREBASE_PRIVATE_KEY')
+			.replace(/\\n/gm, '\n');
 	}
 
 	public get FIREBASE_CLIENT_EMAIL(): string {
