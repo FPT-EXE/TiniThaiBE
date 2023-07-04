@@ -34,6 +34,7 @@ async function bootstrap() {
 		exclude: [{ path: 'health', method: RequestMethod.GET }],
 	});
 	enableSwagger(app);
+	console.log('Serve for', getFeDomain(configSvc));
 	app.enableCors({
 		origin: getFeDomain(configSvc),
 		credentials: true,
