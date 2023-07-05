@@ -49,7 +49,6 @@ export class AuthController {
 		const token = await this._authSvc.login(user);
 		response.cookie('access_token', token.access_token, {
 			httpOnly: true,
-			domain: this._configSvc.NODE_ENV !== 'local' ? this._configSvc.FRONTEND_DOMAIN : undefined,
 			sameSite: 'none',
 			secure: true
 		});
