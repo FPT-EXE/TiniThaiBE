@@ -31,7 +31,10 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	const configSvc = app.get(ConfigService);
 	app.setGlobalPrefix(configSvc.get('API_PREFIX'), {
-		exclude: [{ path: 'health', method: RequestMethod.GET }],
+		exclude: [
+			{ path: '/', method: RequestMethod.GET },
+			{ path: '/health', method: RequestMethod.GET },
+		],
 	});
 	enableSwagger(app);
 	console.log('Serve for', getFeDomain(configSvc));

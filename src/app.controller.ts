@@ -12,6 +12,13 @@ import { Public } from './domain/auth/decorators';
 export class AppController {
 	constructor(private readonly _appService: AppService) {}
 
+
+	@Public()
+	@Get()
+	public getVersion() {
+		return this._appService.getVersion();
+	}
+
 	@Public()
 	@Get('health')
 	public getHello() {
